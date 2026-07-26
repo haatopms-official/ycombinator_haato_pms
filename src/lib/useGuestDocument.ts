@@ -7,6 +7,18 @@ export function useGuestDocument(bookingId: string | undefined) {
   const [passport, setPassportState] = useState<Record<string, string>>({});
   const writeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // BookingDialog, HotelGuestAnketaModal, and GuestDetailsWindow can all be
+  // mounted at the same time for the SAME booking id. If every instance of
+  // this hook builds a realtime channel named `guest_documents:${bookingId}`,
+  // Supabase's client hands the 2nd/3rd caller back the channel that's
+  // already subscribed, and calling `.on()` on an already-subscribed channel
+  // throws ("cannot add `postgres_changes` callbacks ... after `subscribe()`").
+  // Giving each mounted hook instance its own random suffix keeps the
+  // channel names unique per component instance, while the `filter` below
+  // still scopes updates to the correct booking_id — so behavior is
+  // unchanged, only the name collision goes away.
+  const instanceIdRef = useRef(Math.random().toString(36).slice(2));
+
   useEffect(() => {
     if (!bookingId) { setAnketaState({}); setPassportState({}); return; }
     let cancelled = false;
@@ -16,7 +28,8 @@ export function useGuestDocument(bookingId: string | undefined) {
       setAnketaState(doc?.anketa ?? {});
       setPassportState(doc?.passport ?? {});
     })();
-    const channel = supabase.channel(`guest_documents:${bookingId}`)
+    const channel = supabase
+      .channel(`guest_documents:${bookingId}:${instanceIdRef.current}`)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'guest_documents', filter: `booking_id=eq.${bookingId}` },
         (payload) => {
           const row = payload.new as any;
