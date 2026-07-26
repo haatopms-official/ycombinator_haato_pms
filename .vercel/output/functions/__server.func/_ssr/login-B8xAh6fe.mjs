@@ -1,6 +1,6 @@
 import { r as reactExports, j as jsxRuntimeExports } from "../_libs/react.mjs";
 import { e as useNavigate, N as Navigate } from "../_libs/tanstack__react-router.mjs";
-import { a as useAuth, u as useI18n, o as useAdmins, R as ROLE_HOME } from "./router-D8HlAbG0.mjs";
+import { a as useAuth, u as useI18n, o as useAdmins, R as ROLE_HOME } from "./router-Dk_K_NMN.mjs";
 import "../_libs/next-themes.mjs";
 import "../_libs/sonner.mjs";
 import "./client-D0SzQ9iV.mjs";
@@ -80,8 +80,8 @@ function Login() {
     e.preventDefault();
     setError(null);
     setStatus("loading");
-    setTimeout(() => {
-      const result = login(username, password);
+    setTimeout(async () => {
+      const result = await login(username, password);
       if (result.ok === true) {
         finishLogin(result.role);
         return;

@@ -1,37 +1,50 @@
-import { createContext, useCallback, useContext, useMemo, type ReactNode } from 'react';
-import type { UserRole } from './AuthContext';
-import { useSharedState } from '@/lib/hotel-sync';
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { supabase } from '@/integrations/supabase/client';
+import type { UserRole } from './auth-types';
 
 export interface AuditEvent {
-  id: string;
-  at: string;
+  id: string; category: 'auth' | 'booking' | 'admin' | 'shift' | 'form' | 'system';
+  action: string; summary: string; at: string;
   actor: { username: string; role: UserRole; adminId?: string | null };
-  category: 'auth' | 'booking' | 'admin' | 'shift' | 'form' | 'system';
-  action: string;
-  summary: string;
   details?: Record<string, unknown>;
 }
 
-interface AuditContextValue {
-  events: AuditEvent[];
-  log: (e: Omit<AuditEvent, 'id' | 'at'>) => void;
-  clear: () => void;
+const AuditContext = createContext<{ events: AuditEvent[]; log: (e: Omit<AuditEvent, 'id' | 'at'>) => void } | undefined>(undefined);
+
+function rowToEvent(r: any): AuditEvent {
+  return {
+    id: r.id, category: r.category, action: r.action, summary: r.summary, at: r.created_at,
+    actor: { username: r.actor_username, role: r.actor_role, adminId: r.actor_staff_id },
+    details: r.metadata && Object.keys(r.metadata).length ? r.metadata : undefined,
+  };
 }
 
-const AuditContext = createContext<AuditContextValue | undefined>(undefined);
-
 export function AuditProvider({ children }: { children: ReactNode }) {
-  const { data, setData } = useSharedState<AuditEvent[]>('audit', []);
-  const events = useMemo(() => (Array.isArray(data) ? data : []), [data]);
+  const [events, setEvents] = useState<AuditEvent[]>([]);
 
-  const log = useCallback<AuditContextValue['log']>((e) => {
-    const ev: AuditEvent = { ...e, id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, at: new Date().toISOString() };
-    setData((prev) => [ev, ...(Array.isArray(prev) ? prev : [])].slice(0, 2000));
-  }, [setData]);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from('audit_log').select('*').order('created_at', { ascending: false }).limit(500);
+      setEvents((data ?? []).map(rowToEvent));
+    })();
 
-  const clear = useCallback(() => setData([]), [setData]);
+    const channel = supabase.channel('audit_log-realtime')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'audit_log' }, (payload) => {
+        setEvents((prev) => [rowToEvent(payload.new), ...prev].slice(0, 500));
+      })
+      .subscribe();
 
-  const value = useMemo(() => ({ events, log, clear }), [events, log, clear]);
+    return () => { supabase.removeChannel(channel); };
+  }, []);
+
+  const log = useCallback((e: Omit<AuditEvent, 'id' | 'at'>) => {
+    void supabase.from('audit_log').insert({
+      actor_staff_id: e.actor.adminId ?? null, actor_username: e.actor.username, actor_role: e.actor.role,
+      category: e.category, action: e.action, summary: e.summary, metadata: e.details ?? {},
+    });
+  }, []);
+
+  const value = useMemo(() => ({ events, log }), [events, log]);
   return <AuditContext.Provider value={value}>{children}</AuditContext.Provider>;
 }
 

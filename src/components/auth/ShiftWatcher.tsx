@@ -1,37 +1,22 @@
 import { useEffect, useRef } from "react";
 import { useAuth } from "@/contexts/AuthContext";
-import { useAuthHistory } from "@/contexts/AuthHistoryContext";
 import { useAudit } from "@/contexts/AuditContext";
 import { computeShiftWindow } from "@/contexts/ShiftContext";
-import type { LoginEvent } from "@/contexts/auth-types";
 
 const SWEEP_MS = 20_000;
 
 /**
- * Automatically signs admins out at the shift change times (06:00 and 18:00
- * local time), and only admin sessions
- * are never affected.
- *
- * Two mechanisms work together so the logout actually happens even if the
- * admin's own browser tab is closed, asleep, or force-killed before its
- * boundary:
- *
- * 1. A per-session timer, scheduled only while the admin's own tab is open,
- *    that calls `logout()` the moment their shift ends.
- * 2. A global housekeeping sweep, mounted unconditionally (any role, any
- *    page, including the login screen), that periodically scans the shared
- *    login history for ANY admin whose latest event is a `login` past its
- *    shift boundary with no matching `logout`, and closes it out. As long
- *    as *some* browser somewhere has the app open, every admin's session
- *    gets correctly ended at the boundary — not just their own tab.
+ * Automatically signs admins out at the shift change times (06:00 and
+ * 18:00 local time). A per-session timer force-logs-out the current tab
+ * the moment its own shift ends; a global sweep, mounted unconditionally,
+ * scans the audit log for any admin whose latest 'auth' event is a login
+ * past its shift boundary with no matching logout, and closes it out.
  */
 export function ShiftWatcher() {
   const { user, logout } = useAuth();
-  const { history, pushHistory } = useAuthHistory();
-  const { log } = useAudit();
+  const { events, log } = useAudit();
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // 1) Log the current admin out the moment their own shift boundary hits.
   useEffect(() => {
     if (typeof window === "undefined") return;
     if (!user) return;
@@ -47,9 +32,7 @@ export function ShiftWatcher() {
       });
       const nextAt = Math.min(...candidates);
       const delay = Math.max(1000, nextAt - now.getTime());
-      timerRef.current = setTimeout(() => {
-        logout();
-      }, delay);
+      timerRef.current = setTimeout(() => { logout(); }, delay);
     };
 
     scheduleNext();
@@ -59,44 +42,30 @@ export function ShiftWatcher() {
     };
   }, [user, logout]);
 
-  // 2) Global sweep — closes out every admin's stale login, in whichever
-  // tab happens to be open, regardless of who (if anyone) is signed in
-  // there. Runs immediately on mount and then every SWEEP_MS.
   useEffect(() => {
     if (typeof window === "undefined") return;
 
     const sweep = () => {
       const now = Date.now();
-      const latest = new Map<string, LoginEvent>();
-      for (const ev of history) {
-        if (ev.role !== "admin") continue;
-        const key = ev.adminId ?? ev.username;
+      const authEvents = events.filter((e) => e.category === "auth" && e.actor.role === "admin");
+      const latest = new Map<string, (typeof authEvents)[number]>();
+      for (const ev of authEvents) {
+        const key = ev.actor.adminId ?? ev.actor.username;
         const prev = latest.get(key);
         if (!prev || new Date(ev.at).getTime() > new Date(prev.at).getTime()) {
           latest.set(key, ev);
         }
       }
       for (const e of latest.values()) {
-        if (e.action !== "login") continue;
+        if (e.action !== "auth.login") continue;
         const shiftEnd = computeShiftWindow(new Date(e.at)).end;
-        if (now < shiftEnd.getTime()) continue; // still within this admin's shift
+        if (now < shiftEnd.getTime()) continue;
 
-        // Stale login past its shift boundary with no logout recorded —
-        // the admin's own tab must have closed, slept, or been force-shut
-        // before it could log itself out. Close it out here instead.
-        pushHistory({
-          username: e.username,
-          role: "admin",
-          action: "logout",
-          at: shiftEnd.toISOString(),
-          adminId: e.adminId,
-          displayName: e.displayName,
-        });
         log({
-          actor: { username: e.username, role: "admin", adminId: e.adminId ?? null },
+          actor: { username: e.actor.username, role: "admin", adminId: e.actor.adminId ?? null },
           category: "auth",
           action: "auth.logout",
-          summary: `${e.displayName ?? e.username} was automatically signed out (shift ended)`,
+          summary: `${e.actor.username} was automatically signed out (shift ended)`,
         });
       }
     };
@@ -104,7 +73,7 @@ export function ShiftWatcher() {
     sweep();
     const id = window.setInterval(sweep, SWEEP_MS);
     return () => window.clearInterval(id);
-  }, [history, pushHistory, log]);
+  }, [events, log]);
 
   return null;
 }

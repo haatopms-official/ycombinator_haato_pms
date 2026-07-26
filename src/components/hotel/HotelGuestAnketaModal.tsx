@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { useHotelGrid } from '@/hooks/HotelGridContext';
-import { useSharedNamespace } from '@/hooks/useSharedNamespace';
+import { useGuestDocument } from '@/lib/useGuestDocument';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Dialog, DialogContent, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -172,15 +172,14 @@ export function HotelGuestAnketaModal({ open, onClose, booking }: AnketaModalPro
   // already filled in here.
 // Cloud-synced record maps (keyed by booking id) backed by
   // `public.hotel_app_state`. Same rows for every browser/role.
-  const { map: anketaMap, setRecord: setAnketaRecord } = useSharedNamespace('anketas', 'sayohat-anketa-changed');
-  const { map: passportMap } = useSharedNamespace('passports', 'sayohat-passport-changed');
+const { anketa: anketaDoc, passport: passportDoc, setAnketa: setAnketaRecord } = useGuestDocument(booking?.id);
 
   useEffect(() => {
     if (!open) return;
     if (!booking) { setForm(emptyForm(null)); return; }
     let base = emptyForm(booking);
-    const cloudAnketa = anketaMap[booking.id] as Partial<AnketaForm> | undefined;
-    if (cloudAnketa) {
+ const cloudAnketa = anketaDoc as Partial<AnketaForm> | undefined;
+    if (cloudAnketa && Object.keys(cloudAnketa).length) {
       base = { ...base, ...cloudAnketa };
     } else {
       try {
@@ -188,12 +187,12 @@ export function HotelGuestAnketaModal({ open, onClose, booking }: AnketaModalPro
         if (raw) {
           const legacy = JSON.parse(raw) as Partial<AnketaForm>;
           base = { ...base, ...legacy };
-          setAnketaRecord(booking.id, base);
+          setAnketaRecord(base);
         }
       } catch { /* ignore */ }
     }
-    const cloudPassport = passportMap[booking.id] as StoredPassport | undefined;
-    if (cloudPassport) {
+    const cloudPassport = passportDoc as StoredPassport | undefined;
+    if (cloudPassport && Object.keys(cloudPassport).length) {
       base = mergePassportIntoForm(base, cloudPassport);
     } else {
       try {
@@ -204,15 +203,15 @@ export function HotelGuestAnketaModal({ open, onClose, booking }: AnketaModalPro
     if (detectedCategoryId) base.roomType = detectedCategoryId;
     setForm(base);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, booking, detectedCategoryId, anketaMap[booking?.id ?? ''], passportMap[booking?.id ?? '']]);
+  }, [open, booking, detectedCategoryId, anketaDoc, passportDoc]);
 
   useEffect(() => {
     if (!open || !booking) return;
-    const cloudPassport = passportMap[booking.id] as StoredPassport | undefined;
-    if (!cloudPassport) return;
+    const cloudPassport = passportDoc as StoredPassport | undefined;
+    if (!cloudPassport || !Object.keys(cloudPassport).length) return;
     setForm((prev) => mergePassportIntoForm(prev, cloudPassport));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open, booking, passportMap[booking?.id ?? '']]);
+  }, [open, booking, passportDoc]);
 
   const update = <K extends keyof AnketaForm>(key: K, value: AnketaForm[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }));
@@ -261,7 +260,7 @@ export function HotelGuestAnketaModal({ open, onClose, booking }: AnketaModalPro
       return;
     }
 try {
-      setAnketaRecord(booking.id, form);
+      setAnketaRecord(form);
       window.localStorage.setItem(STORAGE_PREFIX + booking.id, JSON.stringify(form)); // offline fallback only
       toast.success(t('anketaSaved'));
       setDirty(false);

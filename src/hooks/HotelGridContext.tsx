@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useMemo, useCallback } from 'react';
 import { ROOM_CATEGORIES, ROOMS_PER_CATEGORY, type Room, type RoomCategory } from '@/types/hotel';
-import { useSharedState } from '@/lib/hotel-sync';
+import { useHotelSettings } from '@/lib/hotel-settings';
 
 export interface CategoryDef {
   id: string;
@@ -109,7 +109,7 @@ export function HotelGridProvider({ children }: { children: React.ReactNode }) {
     return rooms;
   }, []);
 
-  const { data, setData } = useSharedState<GridState>('grid', INITIAL);
+const { data, setData } = useHotelSettings<GridState>('grid', INITIAL);
 
 
   const removedCategoryIds = useMemo(() => new Set(data.removedCategoryIds ?? []), [data.removedCategoryIds]);

@@ -1,8 +1,7 @@
 import { j as jsxRuntimeExports, r as reactExports } from "../_libs/react.mjs";
-import { P as ProtectedRoute, B as Button, T as Textarea, b as buttonVariants, C as Checkbox } from "./checkbox-DVLHaZqC.mjs";
-import { f as useLocation, e as useNavigate, u as useRouter } from "../_libs/tanstack__react-router.mjs";
-import { m as isRedirect } from "../_libs/tanstack__router-core.mjs";
-import { u as useI18n, k as useBookingsContext, h as useHotelGrid, f as useNotifications, a as useAuth, b as useTheme, d as useShift, e as useNow, g as formatRemaining, B as BOOKING_STATUSES, m as useAudit, n as useSharedState, l as isRoomDirty, i as formatGuestName, c as cn, j as useHotelDetails } from "./router-D8HlAbG0.mjs";
+import { P as ProtectedRoute, B as Button, T as Textarea, b as buttonVariants, C as Checkbox } from "./checkbox-CbbKB-hU.mjs";
+import { f as useLocation, e as useNavigate } from "../_libs/tanstack__react-router.mjs";
+import { u as useI18n, k as useBookingsContext, h as useHotelGrid, f as useNotifications, a as useAuth, b as useTheme, d as useShift, e as useNow, g as formatRemaining, B as BOOKING_STATUSES, m as useAudit, n as useHotelSettings, l as isRoomDirty, i as formatGuestName, c as cn, j as useHotelDetails } from "./router-Dk_K_NMN.mjs";
 import { R as Root2$1, T as Trigger, P as Portal, C as Content2$1 } from "../_libs/radix-ui__react-popover.mjs";
 import { r as reactDomExports } from "../_libs/react-dom.mjs";
 import { g as Dialog$1, D as DialogPortal$1, a as DialogContent$1, d as DialogClose, b as DialogTitle$1, c as DialogDescription$1, f as DialogOverlay$1 } from "../_libs/radix-ui__react-dialog.mjs";
@@ -12,14 +11,11 @@ import { S as Select$1, a as SelectValue$1, b as SelectTrigger$1, c as SelectIco
 import { t as toast } from "../_libs/sonner.mjs";
 import { R as Root2, P as Portal2, C as Content2, T as Title2, D as Description2, a as Cancel, A as Action, O as Overlay2 } from "../_libs/radix-ui__react-alert-dialog.mjs";
 import { V as VisuallyHidden } from "../_libs/@radix-ui/react-visually-hidden+[...].mjs";
-import { a as createServerFn, T as TSS_SERVER_FUNCTION, g as getServerFnById } from "./server-BDav3mxU.mjs";
+import { s as supabase } from "./client-D0SzQ9iV.mjs";
 import "../_libs/next-themes.mjs";
-import "./client-D0SzQ9iV.mjs";
-import "../_libs/seroval.mjs";
 import { s as startOfDay, a as isWithinInterval, p as parseISO, f as format, b as addDays, c as subDays, d as differenceInCalendarDays, i as isBefore, e as isSameDay, g as isValid, h as startOfMonth, j as addMonths, k as setMonth, l as setYear, m as isSameMonth, n as parse } from "../_libs/date-fns.mjs";
 import { b as Building2, U as UserCog, S as Sun, M as Moon, c as Timer, d as LayoutGrid, C as CalendarRange, e as Clock, B as Bell, a as LogOut, H as Hotel, D as DoorOpen, f as BookOpen, g as House, W as Wrench, h as CalendarCheck2, F as FolderPlus, i as ChevronRight, j as ChevronDown, k as Users, P as Plus, l as Trash2, m as User, X, T as TriangleAlert, n as Check, o as BedDouble, p as Sunrise, A as ArrowRight, q as UserPlus, r as DollarSign, s as CalendarDays, t as Phone, u as MessageCircle, v as Mail, w as Send, I as Instagram, x as StickyNote, y as Sparkles, z as ClipboardPenLine, R as Receipt, E as Info, G as Layers, J as Hash, K as Pencil, N as ScrollText, O as CircleCheck, Q as Printer, V as Download, Y as Activity, Z as Zap, _ as Fingerprint, $ as ShieldCheck, a0 as Clock3, a1 as ContactRound, a2 as IdCard, a3 as Flag$1, a4 as ShieldAlert, a5 as FileWarning, a6 as Save, a7 as ChevronUp, a8 as Globe, a9 as Search, aa as PenLine, ab as Radio, ac as Usb, ad as Eraser, ae as ChevronLeft } from "../_libs/lucide-react.mjs";
 import { m as motion, A as AnimatePresence } from "../_libs/framer-motion.mjs";
-import { o as objectType, a as anyType, e as enumType } from "../_libs/zod.mjs";
 import "../_libs/radix-ui__react-slot.mjs";
 import "../_libs/radix-ui__react-compose-refs.mjs";
 import "../_libs/radix-ui__react-checkbox.mjs";
@@ -31,12 +27,14 @@ import "../_libs/@radix-ui/react-use-effect-event+[...].mjs";
 import "../_libs/radix-ui__react-use-size.mjs";
 import "../_libs/radix-ui__react-presence.mjs";
 import "../_libs/radix-ui__react-primitive.mjs";
-import "node:stream";
-import "../_libs/isbot.mjs";
+import "../_libs/tanstack__router-core.mjs";
 import "../_libs/tanstack__history.mjs";
 import "../_libs/cookie-es.mjs";
+import "../_libs/seroval.mjs";
 import "../_libs/seroval-plugins.mjs";
 import "node:stream/web";
+import "node:stream";
+import "../_libs/isbot.mjs";
 import "../_libs/tanstack__query-core.mjs";
 import "../_libs/tanstack__react-query.mjs";
 import "../_libs/radix-ui__react-toast.mjs";
@@ -78,28 +76,8 @@ import "../_libs/use-callback-ref.mjs";
 import "../_libs/radix-ui__number.mjs";
 import "../_libs/radix-ui__react-direction.mjs";
 import "../_libs/radix-ui__react-use-previous.mjs";
-import "node:async_hooks";
-import "../_libs/h3-v2.mjs";
-import "../_libs/rou3.mjs";
-import "../_libs/srvx.mjs";
 import "../_libs/motion-dom.mjs";
 import "../_libs/motion-utils.mjs";
-function useServerFn(serverFn) {
-  const router = useRouter();
-  return reactExports.useCallback(async (...args) => {
-    try {
-      const res = await serverFn(...args);
-      if (isRedirect(res)) throw res;
-      return res;
-    } catch (err) {
-      if (isRedirect(err)) {
-        err.options._fromLocation = router.stores.location.get();
-        return router.navigate(router.resolveRedirect(err).options);
-      }
-      throw err;
-    }
-  }, [router, serverFn]);
-}
 function useClock() {
   const [time, setTime] = reactExports.useState("");
   reactExports.useEffect(() => {
@@ -1907,98 +1885,65 @@ const AlertDialogCancel = reactExports.forwardRef(({ className, ...props }, ref)
   }
 ));
 AlertDialogCancel.displayName = Cancel.displayName;
-var createSsrRpc = (functionId) => {
-  const url = "/_serverFn/" + functionId;
-  const serverFnMeta = { id: functionId };
-  const fn = async (...args) => {
-    return (await getServerFnById(functionId))(...args);
-  };
-  return Object.assign(fn, {
-    url,
-    serverFnMeta,
-    [TSS_SERVER_FUNCTION]: true
-  });
-};
-const stateKeySchema = enumType(["bookings", "grid", "admins", "audit", "auth-history", "guests", "anketas", "passports"]);
-const getStateSchema = objectType({
-  key: stateKeySchema
-});
-const setStateSchema = objectType({
-  key: stateKeySchema,
-  stateData: anyType()
-});
-const getHotelState = createServerFn({
-  method: "GET"
-}).inputValidator((input) => getStateSchema.parse(input)).handler(createSsrRpc("89b60288b8b232346474bc8bf300257346a58b7164121f204f414697ad1faac3"));
-const setHotelState = createServerFn({
-  method: "POST"
-}).inputValidator((input) => setStateSchema.parse(input)).handler(createSsrRpc("114603339148d6b7cfbc2a9a16d7c155014b773beb6587879438626e7354f351"));
-const memCache = {};
-function useSharedNamespace(key, eventName) {
-  const getShared = useServerFn(getHotelState);
-  const setShared = useServerFn(setHotelState);
-  const [map, setMap] = reactExports.useState(() => memCache[key] ?? {});
-  const mapRef = reactExports.useRef(memCache[key] ?? {});
+async function getGuestDocument(bookingId) {
+  const { data } = await supabase.from("guest_documents").select("*").eq("booking_id", bookingId).maybeSingle();
+  return data;
+}
+async function saveGuestDocument(bookingId, patch) {
+  const payload = { booking_id: bookingId };
+  if (patch.anketa !== void 0) payload.anketa = patch.anketa;
+  if (patch.passport !== void 0) payload.passport = patch.passport;
+  return supabase.from("guest_documents").upsert(payload, { onConflict: "booking_id" });
+}
+function useGuestDocument(bookingId) {
+  const [anketa, setAnketaState] = reactExports.useState({});
+  const [passport, setPassportState] = reactExports.useState({});
   const writeTimer = reactExports.useRef(null);
-  const lastVersion = reactExports.useRef(0);
-  const pendingWrite = reactExports.useRef(false);
   reactExports.useEffect(() => {
-    mapRef.current = map;
-  }, [map]);
-  reactExports.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const onLocal = () => {
-      const fresh = memCache[key];
-      if (fresh && fresh !== mapRef.current) setMap(fresh);
-    };
-    window.addEventListener(eventName, onLocal);
-    return () => window.removeEventListener(eventName, onLocal);
-  }, [eventName, key]);
-  reactExports.useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (!bookingId) {
+      setAnketaState({});
+      setPassportState({});
+      return;
+    }
     let cancelled = false;
-    const pull = async () => {
-      try {
-        const row = await getShared({ data: { key } });
-        if (cancelled || !row?.stateData) return;
-        if (row.version <= lastVersion.current || pendingWrite.current) return;
-        lastVersion.current = row.version;
-        const next = row.stateData || {};
-        memCache[key] = next;
-        setMap(next);
-        window.dispatchEvent(new Event(eventName));
-      } catch {
+    (async () => {
+      const doc = await getGuestDocument(bookingId);
+      if (cancelled) return;
+      setAnketaState(doc?.anketa ?? {});
+      setPassportState(doc?.passport ?? {});
+    })();
+    const channel = supabase.channel(`guest_documents:${bookingId}`).on(
+      "postgres_changes",
+      { event: "*", schema: "public", table: "guest_documents", filter: `booking_id=eq.${bookingId}` },
+      (payload) => {
+        const row = payload.new;
+        if (!row) return;
+        setAnketaState(row.anketa ?? {});
+        setPassportState(row.passport ?? {});
       }
-    };
-    void pull();
-    const id = window.setInterval(pull, 2e3);
+    ).subscribe();
     return () => {
       cancelled = true;
-      window.clearInterval(id);
+      supabase.removeChannel(channel);
     };
-  }, [getShared, key, eventName]);
-  const setRecord = reactExports.useCallback((id, data) => {
-    setMap((prev) => {
-      const next = { ...prev, [id]: data };
-      mapRef.current = next;
-      memCache[key] = next;
-      pendingWrite.current = true;
-      if (typeof window !== "undefined") {
-        if (writeTimer.current) window.clearTimeout(writeTimer.current);
-        writeTimer.current = window.setTimeout(() => {
-          void setShared({ data: { key, stateData: mapRef.current } }).then((row) => {
-            lastVersion.current = row.version;
-            pendingWrite.current = false;
-          }).catch(() => {
-            pendingWrite.current = false;
-          });
-        }, 150);
-        window.dispatchEvent(new Event(eventName));
-      }
-      return next;
-    });
-  }, [setShared, key, eventName]);
-  return { map, setRecord };
+  }, [bookingId]);
+  const setAnketa = reactExports.useCallback((next) => {
+    setAnketaState(next);
+    if (!bookingId) return;
+    if (writeTimer.current) clearTimeout(writeTimer.current);
+    writeTimer.current = setTimeout(() => {
+      void saveGuestDocument(bookingId, { anketa: next });
+    }, 150);
+  }, [bookingId]);
+  const setPassport = reactExports.useCallback((next) => {
+    setPassportState(next);
+    if (!bookingId) return;
+    if (writeTimer.current) clearTimeout(writeTimer.current);
+    writeTimer.current = setTimeout(() => {
+      void saveGuestDocument(bookingId, { passport: next });
+    }, 150);
+  }, [bookingId]);
+  return { anketa, passport, setAnketa, setPassport };
 }
 const MAX_X_GUESS = 65535;
 const MAX_Y_GUESS = 65535;
@@ -3082,8 +3027,7 @@ function HotelGuestAnketaModal({ open, onClose, booking }) {
   }, [booking, rooms]);
   const [dirty, setDirty] = reactExports.useState(false);
   const [warnOpen, setWarnOpen] = reactExports.useState(false);
-  const { map: anketaMap, setRecord: setAnketaRecord } = useSharedNamespace("anketas", "sayohat-anketa-changed");
-  const { map: passportMap } = useSharedNamespace("passports", "sayohat-passport-changed");
+  const { anketa: anketaDoc, passport: passportDoc, setAnketa: setAnketaRecord } = useGuestDocument(booking?.id);
   reactExports.useEffect(() => {
     if (!open) return;
     if (!booking) {
@@ -3091,8 +3035,8 @@ function HotelGuestAnketaModal({ open, onClose, booking }) {
       return;
     }
     let base = emptyForm(booking);
-    const cloudAnketa = anketaMap[booking.id];
-    if (cloudAnketa) {
+    const cloudAnketa = anketaDoc;
+    if (cloudAnketa && Object.keys(cloudAnketa).length) {
       base = { ...base, ...cloudAnketa };
     } else {
       try {
@@ -3100,13 +3044,13 @@ function HotelGuestAnketaModal({ open, onClose, booking }) {
         if (raw) {
           const legacy = JSON.parse(raw);
           base = { ...base, ...legacy };
-          setAnketaRecord(booking.id, base);
+          setAnketaRecord(base);
         }
       } catch {
       }
     }
-    const cloudPassport = passportMap[booking.id];
-    if (cloudPassport) {
+    const cloudPassport = passportDoc;
+    if (cloudPassport && Object.keys(cloudPassport).length) {
       base = mergePassportIntoForm(base, cloudPassport);
     } else {
       try {
@@ -3117,13 +3061,13 @@ function HotelGuestAnketaModal({ open, onClose, booking }) {
     }
     if (detectedCategoryId) base.roomType = detectedCategoryId;
     setForm(base);
-  }, [open, booking, detectedCategoryId, anketaMap[booking?.id ?? ""], passportMap[booking?.id ?? ""]]);
+  }, [open, booking, detectedCategoryId, anketaDoc, passportDoc]);
   reactExports.useEffect(() => {
     if (!open || !booking) return;
-    const cloudPassport = passportMap[booking.id];
-    if (!cloudPassport) return;
+    const cloudPassport = passportDoc;
+    if (!cloudPassport || !Object.keys(cloudPassport).length) return;
     setForm((prev) => mergePassportIntoForm(prev, cloudPassport));
-  }, [open, booking, passportMap[booking?.id ?? ""]]);
+  }, [open, booking, passportDoc]);
   const update = (key, value) => {
     setForm((prev) => ({ ...prev, [key]: value }));
     setDirty(true);
@@ -3169,7 +3113,7 @@ function HotelGuestAnketaModal({ open, onClose, booking }) {
       return;
     }
     try {
-      setAnketaRecord(booking.id, form);
+      setAnketaRecord(form);
       window.localStorage.setItem(STORAGE_PREFIX + booking.id, JSON.stringify(form));
       toast.success(t("anketaSaved"));
       setDirty(false);
@@ -3973,7 +3917,7 @@ function GuestDetailsWindow({ open, onClose, guest }) {
     });
     return next;
   };
-  const { map: passportMap, setRecord: setPassportRecord } = useSharedNamespace("passports", "sayohat-passport-changed");
+  const { passport: passportDoc, setPassport: setPassportRecordCloud } = useGuestDocument(guest.bookingId);
   const [passport, setPassport] = reactExports.useState(EMPTY_PASSPORT);
   reactExports.useEffect(() => {
     if (typeof window === "undefined") return;
@@ -3987,7 +3931,7 @@ function GuestDetailsWindow({ open, onClose, guest }) {
       }
       return { ...EMPTY_PASSPORT, ...parsed };
     };
-    const cloud = passportMap[storageKey];
+    const cloud = guest.bookingId ? passportDoc : void 0;
     if (cloud) {
       setPassport(buildAutoFill(normalize({ ...cloud })));
       return;
@@ -3997,17 +3941,17 @@ function GuestDetailsWindow({ open, onClose, guest }) {
       if (raw) {
         const parsed = normalize(JSON.parse(raw));
         setPassport(buildAutoFill(parsed));
-        setPassportRecord(storageKey, parsed);
+        setPassportRecordCloud(parsed);
         return;
       }
     } catch {
     }
     setPassport(buildAutoFill(EMPTY_PASSPORT));
-  }, [storageKey, guest.guestLastName, guest.guestFirstName, guest.guestMiddleName, passportMap[storageKey]]);
+  }, [storageKey, guest.guestLastName, guest.guestFirstName, guest.guestMiddleName, passportDoc]);
   const updatePassport = (key, value) => {
     setPassport((prev) => {
       const next = { ...prev, [key]: value };
-      setPassportRecord(storageKey, next);
+      setPassportRecordCloud(next);
       try {
         window.localStorage.setItem(storageKey, JSON.stringify(next));
       } catch {
@@ -5016,8 +4960,8 @@ function BookingDialog({
       setPaymentConfirmed(false);
     }
   }, [editBooking, checkIn, checkOut, open, prefillName, initialEarlyCheckin, initialLateCheckout]);
-  const { map: passportMap, setRecord: setPassportRecord } = useSharedNamespace("passports", "sayohat-passport-changed");
-  const passportSlice = editBooking ? passportMap[editBooking.id] : void 0;
+  const { passport: passportDoc, setPassport: setPassportRecord } = useGuestDocument(editBooking?.id);
+  const passportSlice = editBooking ? passportDoc : void 0;
   const pLast = (passportSlice?.lastName ?? "").toString();
   const pFirst = (passportSlice?.firstName ?? "").toString();
   const pMiddle = (passportSlice?.middleName ?? "").toString();
@@ -5029,12 +4973,12 @@ function BookingDialog({
   }, [open, editBooking?.id, pLast, pFirst, pMiddle]);
   reactExports.useEffect(() => {
     if (!open || !editBooking) return;
-    const current = passportMap[editBooking.id] || {};
+    const current = passportDoc || {};
     const nl = lastName.trim();
     const nf = firstName.trim();
     const nm = middleName.trim();
     if ((current.lastName ?? "") === nl && (current.firstName ?? "") === nf && (current.middleName ?? "") === nm) return;
-    setPassportRecord(editBooking.id, { ...current, lastName: nl, firstName: nf, middleName: nm });
+    setPassportRecord({ ...current, lastName: nl, firstName: nf, middleName: nm });
   }, [open, editBooking?.id, lastName, firstName, middleName]);
   const dayDiff = inDate && outDate ? differenceInCalendarDays(parseISO(outDate), parseISO(inDate)) : 0;
   const todayISO = format(startOfDay(/* @__PURE__ */ new Date()), "yyyy-MM-dd");
@@ -6378,7 +6322,7 @@ function HotelRoomGrid({ bookings, conflictBookings = bookings, onAddBooking, on
   const [collapsedCategories, setCollapsedCategories] = reactExports.useState({});
   const [expandedRooms, setExpandedRooms] = reactExports.useState({});
   const [personNames, setPersonNames] = reactExports.useState({});
-  const { data: extraPersons, setData: setExtraPersonsShared } = useSharedState("guests", {});
+  const { data: extraPersons, setData: setExtraPersonsShared } = useHotelSettings("guests", {});
   const setExtraPersons = reactExports.useCallback(
     (updater) => {
       setExtraPersonsShared(updater);

@@ -1,5 +1,5 @@
 import { useMemo, useState, useRef, useCallback, useEffect, memo, type CSSProperties } from 'react';
-import { useSharedState } from '@/lib/hotel-sync';
+import { useHotelSettings } from '@/lib/hotel-settings';
 import { createPortal } from 'react-dom';
 import { addDays, subDays, format, differenceInCalendarDays, isSameDay, parseISO, startOfDay, isBefore } from 'date-fns';
 import { BOOKING_STATUSES, type Booking, type BookingStatus, isRoomDirty } from '@/types/hotel';
@@ -276,7 +276,7 @@ export function HotelRoomGrid({ bookings, conflictBookings = bookings, onAddBook
   const [collapsedCategories, setCollapsedCategories] = useState<Record<string, boolean>>({});
   const [expandedRooms, setExpandedRooms] = useState<Record<number, boolean>>({});
   const [personNames, setPersonNames] = useState<PersonNames>({});
-  const { data: extraPersons, setData: setExtraPersonsShared } = useSharedState<ExtraPersons>('guests', {});
+const { data: extraPersons, setData: setExtraPersonsShared } = useHotelSettings<ExtraPersons>('guests', {});
   const setExtraPersons = useCallback(
     (updater: ExtraPersons | ((prev: ExtraPersons) => ExtraPersons)) => {
       setExtraPersonsShared(updater);

@@ -16,7 +16,6 @@ import { HotelGridProvider } from "@/hooks/HotelGridContext";
 import { ThemeProvider } from "@/hooks/ThemeContext";
 import { I18nProvider } from "@/hooks/useI18n";
 import { AuthProvider } from "@/contexts/AuthContext";
-import { AuthHistoryProvider } from "@/contexts/AuthHistoryContext";
 import { ShiftProvider } from "@/contexts/ShiftContext";
 import { AdminsProvider } from "@/contexts/AdminsContext";
 import { AuditProvider } from "@/contexts/AuditContext";
@@ -153,8 +152,7 @@ function RootComponent() {
             <ToastAutoDismiss />
             <HotelDetailsProvider>
               <AdminsProvider>
-                <AuditProvider>
-                  <AuthHistoryProvider>
+<AuditProvider>
                     <AuthProvider>
                       <UserLanguageSync />
                       <BookingsProvider>
@@ -168,8 +166,7 @@ function RootComponent() {
                           </ShiftProvider>
                         </HotelGridProvider>
                       </BookingsProvider>
-                    </AuthProvider>
-                  </AuthHistoryProvider>
+</AuthProvider>
                 </AuditProvider>
               </AdminsProvider>
             </HotelDetailsProvider>

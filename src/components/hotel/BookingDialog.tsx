@@ -42,8 +42,7 @@ import { useHotelGrid } from '@/hooks/HotelGridContext';
 import { ChevronDown } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { UnsavedCloseWarning } from './UnsavedCloseWarning';
-import { useSharedNamespace } from '@/hooks/useSharedNamespace';
-
+import { useGuestDocument } from '@/lib/useGuestDocument';
 
 const nextDay = (iso: string) => format(addDays(parseISO(iso), 1), 'yyyy-MM-dd');
 const prevDay = (iso: string) => format(addDays(parseISO(iso), -1), 'yyyy-MM-dd');
@@ -236,10 +235,8 @@ export function BookingDialog({
   // Details (Паспортные данные) appear here in the main filling area
   // immediately, and vice versa — the three panels always show the same
   // canonical name.
-  const { map: passportMap, setRecord: setPassportRecord } = useSharedNamespace('passports', 'sayohat-passport-changed');
-  const passportSlice = editBooking
-    ? (passportMap[editBooking.id] as Record<string, string> | undefined)
-    : undefined;
+const { passport: passportDoc, setPassport: setPassportRecord } = useGuestDocument(editBooking?.id);
+  const passportSlice = editBooking ? passportDoc : undefined;
   const pLast = (passportSlice?.lastName ?? '').toString();
   const pFirst = (passportSlice?.firstName ?? '').toString();
   const pMiddle = (passportSlice?.middleName ?? '').toString();
@@ -258,14 +255,14 @@ export function BookingDialog({
   // Guest Details and Anketa see them the next time they read.
   useEffect(() => {
     if (!open || !editBooking) return;
-    const current = (passportMap[editBooking.id] as Record<string, string> | undefined) || {};
+const current = passportDoc || {};
     const nl = lastName.trim();
     const nf = firstName.trim();
     const nm = middleName.trim();
     if ((current.lastName ?? '') === nl
       && (current.firstName ?? '') === nf
       && (current.middleName ?? '') === nm) return;
-    setPassportRecord(editBooking.id, { ...current, lastName: nl, firstName: nf, middleName: nm });
+    setPassportRecord({ ...current, lastName: nl, firstName: nf, middleName: nm });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, editBooking?.id, lastName, firstName, middleName]);
 

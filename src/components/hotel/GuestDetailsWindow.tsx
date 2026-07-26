@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { HotelDatePicker } from './HotelDatePicker';
 import { CountrySelect } from './CountrySelect';
-import { useSharedNamespace } from '@/hooks/useSharedNamespace';
+import { useGuestDocument } from '@/lib/useGuestDocument';
 import { VisuallyHidden } from '@radix-ui/react-visually-hidden';
 import {
   Activity,
@@ -183,7 +183,7 @@ export function GuestDetailsWindow({ open, onClose, guest }: GuestDetailsWindowP
     return next;
   };
 
-const { map: passportMap, setRecord: setPassportRecord } = useSharedNamespace('passports', 'sayohat-passport-changed');
+const { passport: passportDoc, setPassport: setPassportRecordCloud } = useGuestDocument(guest.bookingId);
 
   const [passport, setPassport] = useState<PassportData>(EMPTY_PASSPORT);
   useEffect(() => {
@@ -199,7 +199,7 @@ const { map: passportMap, setRecord: setPassportRecord } = useSharedNamespace('p
       return { ...EMPTY_PASSPORT, ...(parsed as Partial<PassportData>) };
     };
 
-    const cloud = passportMap[storageKey] as Record<string, string> | undefined;
+const cloud = guest.bookingId ? (passportDoc as Record<string, string> | undefined) : undefined;
     if (cloud) {
       setPassport(buildAutoFill(normalize({ ...cloud })));
       return;
@@ -209,18 +209,18 @@ const { map: passportMap, setRecord: setPassportRecord } = useSharedNamespace('p
       if (raw) {
         const parsed = normalize(JSON.parse(raw) as Record<string, string>);
         setPassport(buildAutoFill(parsed));
-        setPassportRecord(storageKey, parsed);
+        setPassportRecordCloud(parsed);
         return;
       }
     } catch { /* ignore */ }
     setPassport(buildAutoFill(EMPTY_PASSPORT));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [storageKey, guest.guestLastName, guest.guestFirstName, guest.guestMiddleName, passportMap[storageKey]]);
+}, [storageKey, guest.guestLastName, guest.guestFirstName, guest.guestMiddleName, passportDoc]);
 
   const updatePassport = (key: PassportKey, value: string) => {
     setPassport((prev) => {
       const next = { ...prev, [key]: value };
-      setPassportRecord(storageKey, next);
+      setPassportRecordCloud(next);
       try { window.localStorage.setItem(storageKey, JSON.stringify(next)); } catch { /* ignore quota errors */ }
       return next;
     });

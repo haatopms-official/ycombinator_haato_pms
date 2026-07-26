@@ -297,59 +297,6 @@ const TooltipContent = reactExports.forwardRef(({ className, sideOffset = 4, ...
   }
 ));
 TooltipContent.displayName = Content2.displayName;
-const ROOM_CATEGORIES = [
-  { id: "standard-double", label: { en: "Standard Double", ru: "Стандарт Двухместный", uz: "Standart Ikki kishilik" }, short: "Std Dbl", maxGuests: 2 },
-  { id: "standard-twin", label: { en: "Standard Twin", ru: "Стандарт Твин", uz: "Standart Twin" }, short: "Std Twin", maxGuests: 2 },
-  { id: "standard-triple", label: { en: "Standard Triple", ru: "Стандарт Трёхместный", uz: "Standart Uch kishilik" }, short: "Std Trpl", maxGuests: 3 },
-  { id: "standard-quadruple", label: { en: "Standard Quadruple", ru: "Стандарт Четырёхместный", uz: "Standart To'rt kishilik" }, short: "Std Quad", maxGuests: 4 },
-  { id: "deluxe-double", label: { en: "Deluxe Double", ru: "Делюкс Двухместный", uz: "Deluxe Ikki kishilik" }, short: "Dlx Dbl", maxGuests: 2 },
-  { id: "deluxe-twin", label: { en: "Deluxe Twin", ru: "Делюкс Твин", uz: "Deluxe Twin" }, short: "Dlx Twin", maxGuests: 2 }
-];
-const ROOMS_PER_CATEGORY = 5;
-const BOOKING_STATUSES = {
-  confirmed: { color: "#3B82F6", bg: "bg-blue-500", border: "border-solid border-blue-600", opacity: "opacity-100", label: { en: "Confirmed", ru: "Подтверждено", uz: "Tasdiqlangan" }, icon: "✔", tailwindBg: "bg-blue-50", tailwindText: "text-blue-700", tailwindBorder: "border-blue-200" },
-  pending: { color: "#F59E0B", bg: "bg-amber-500", border: "border-solid border-amber-600", opacity: "opacity-100", label: { en: "Pending", ru: "Ожидание", uz: "Kutilmoqda" }, icon: "⏳", tailwindBg: "bg-amber-50", tailwindText: "text-amber-700", tailwindBorder: "border-amber-200" },
-  booked: { color: "#8B5CF6", bg: "bg-violet-500", border: "border-solid border-violet-600", opacity: "opacity-100", label: { en: "Booked", ru: "Забронировано", uz: "Band qilingan" }, icon: "📋", tailwindBg: "bg-violet-50", tailwindText: "text-violet-700", tailwindBorder: "border-violet-200" },
-  "in-house": { color: "#10B981", bg: "bg-emerald-500", border: "border-solid border-emerald-600", opacity: "opacity-100", label: { en: "In House", ru: "Проживает", uz: "Ichkarida" }, icon: "🛏", tailwindBg: "bg-emerald-50", tailwindText: "text-emerald-700", tailwindBorder: "border-emerald-200" },
-  "checked-out": { color: "#6B7280", bg: "bg-gray-400/60", border: "border-solid border-gray-300", opacity: "opacity-60", label: { en: "Checked Out", ru: "Выехал", uz: "Chiqib ketgan" }, icon: "✓", tailwindBg: "bg-gray-100", tailwindText: "text-gray-600", tailwindBorder: "border-gray-200" },
-  maintenance: { color: "#EF4444", bg: "bg-red-500", border: "border-solid border-red-600", opacity: "opacity-90", label: { en: "Maintenance", ru: "Обслуживание", uz: "Texnik xizmat" }, icon: "🔧", tailwindBg: "bg-red-50", tailwindText: "text-red-700", tailwindBorder: "border-red-200" },
-  dirty: { color: "#EF4444", bg: "bg-red-500", border: "border-solid border-red-600", opacity: "opacity-90", label: { en: "Dirty", ru: "Грязный", uz: "Iflos" }, icon: "🧹", tailwindBg: "bg-red-50", tailwindText: "text-red-700", tailwindBorder: "border-red-200" },
-  cleaned: { color: "#9CA3AF", bg: "bg-gray-400/60", border: "border-solid border-gray-300", opacity: "opacity-60", label: { en: "Cleaned", ru: "Убрано", uz: "Tozalangan" }, icon: "✨", tailwindBg: "bg-gray-100", tailwindText: "text-gray-600", tailwindBorder: "border-gray-200" }
-};
-function isRoomDirty(roomNumber, bookings) {
-  return bookings.some((b) => b.roomNumber === roomNumber && b.status === "dirty");
-}
-function generateSampleBookings() {
-  return [
-    { id: "b1", roomNumber: 101, guestName: "John Doe", guestPhone: "+998901234567", guestEmail: "john@email.com", guestCount: 2, checkIn: "2026-04-11", checkOut: "2026-04-16", notes: "VIP guest", status: "in-house" },
-    { id: "b2", roomNumber: 102, guestName: "Asef Karimov", guestPhone: "+998907654321", guestEmail: "asef@email.com", guestCount: 1, checkIn: "2026-04-10", checkOut: "2026-04-16", notes: "", status: "confirmed" },
-    { id: "b3", roomNumber: 103, guestName: "Maria Ivanova", guestPhone: "+998912223344", guestEmail: "maria@email.com", guestCount: 2, checkIn: "2026-04-11", checkOut: "2026-04-12", notes: "Early checkout", status: "pending" },
-    { id: "b4", roomNumber: 104, guestName: "Alex Turner", guestPhone: "+998933334455", guestEmail: "alex@email.com", guestCount: 1, checkIn: "2026-04-09", checkOut: "2026-04-11", notes: "", status: "checked-out" },
-    { id: "b5", roomNumber: 105, guestName: "Sam Wilson", guestPhone: "+998944445566", guestEmail: "sam@email.com", guestCount: 1, checkIn: "2026-04-11", checkOut: "2026-04-14", notes: "", status: "booked" },
-    { id: "b6", roomNumber: 201, guestName: "", guestPhone: "", guestEmail: "", guestCount: 0, checkIn: "2026-04-10", checkOut: "2026-04-20", notes: "Plumbing repair", status: "maintenance" },
-    { id: "b7", roomNumber: 202, guestName: "Elena Petrova", guestPhone: "+998955556677", guestEmail: "elena@email.com", guestCount: 2, checkIn: "2026-04-12", checkOut: "2026-04-18", notes: "", status: "confirmed" },
-    { id: "b8", roomNumber: 203, guestName: "Dmitry Volkov", guestPhone: "+998966667788", guestEmail: "dmitry@email.com", guestCount: 1, checkIn: "2026-04-13", checkOut: "2026-04-19", notes: "", status: "booked" },
-    { id: "b9", roomNumber: 204, guestName: "Lola Alimova", guestPhone: "+998977778899", guestEmail: "lola@email.com", guestCount: 3, checkIn: "2026-04-11", checkOut: "2026-04-15", notes: "Family room", status: "in-house" },
-    { id: "b10", roomNumber: 205, guestName: "Rustam Akhmedov", guestPhone: "+998988889900", guestEmail: "rustam@email.com", guestCount: 2, checkIn: "2026-04-14", checkOut: "2026-04-20", notes: "", status: "pending" },
-    { id: "b11", roomNumber: 301, guestName: "Anna Schmidt", guestPhone: "+498123456789", guestEmail: "anna@email.com", guestCount: 2, checkIn: "2026-04-12", checkOut: "2026-04-17", notes: "", status: "confirmed" },
-    { id: "b12", roomNumber: 302, guestName: "Pierre Dupont", guestPhone: "+331234567890", guestEmail: "pierre@email.com", guestCount: 1, checkIn: "2026-04-13", checkOut: "2026-04-18", notes: "Late arrival", status: "pending" },
-    { id: "b13", roomNumber: 303, guestName: "Yuki Tanaka", guestPhone: "+811234567890", guestEmail: "yuki@email.com", guestCount: 2, checkIn: "2026-04-11", checkOut: "2026-04-14", notes: "", status: "in-house" },
-    { id: "b14", roomNumber: 304, guestName: "Omar Hassan", guestPhone: "+201234567890", guestEmail: "omar@email.com", guestCount: 1, checkIn: "2026-04-15", checkOut: "2026-04-21", notes: "", status: "booked" },
-    { id: "b15", roomNumber: 305, guestName: "Li Wei", guestPhone: "+861234567890", guestEmail: "li@email.com", guestCount: 2, checkIn: "2026-04-12", checkOut: "2026-04-16", notes: "", status: "confirmed" },
-    { id: "b16", roomNumber: 401, guestName: "Carlos Silva", guestPhone: "+551234567890", guestEmail: "carlos@email.com", guestCount: 4, checkIn: "2026-04-11", checkOut: "2026-04-19", notes: "Large family", status: "in-house" },
-    { id: "b17", roomNumber: 402, guestName: "Priya Patel", guestPhone: "+911234567890", guestEmail: "priya@email.com", guestCount: 3, checkIn: "2026-04-14", checkOut: "2026-04-22", notes: "", status: "pending" },
-    { id: "b18", roomNumber: 104, guestName: "Фыва", guestPhone: "+998900001104", guestEmail: "fyva@sayohat.uz", guestCount: 1, checkIn: "2026-04-30", checkOut: "2026-05-01", notes: "Номер 104", status: "confirmed", checkInHalfDay: true, checkOutHalfDay: true }
-  ];
-}
-function formatGuestName(b) {
-  const last = (b.guestLastName || "").trim();
-  const first = (b.guestFirstName || "").trim();
-  const middle = (b.guestMiddleName || "").trim();
-  if (last || first || middle) {
-    return [last, first, middle].filter(Boolean).join(" ");
-  }
-  return (b.guestName || "").trim();
-}
 const translations = {
   // Brand
   hotelName: { ru: "Отель Саёхат", uz: "Sayohat Mehmonxonasi", en: "Sayohat Hotel" },
@@ -579,154 +526,175 @@ function I18nProvider({ children }) {
 function useI18n() {
   return reactExports.useContext(I18nContext);
 }
-const SUPABASE_URL = "https://ojjeghtlodmddwepwdyj.supabase.co";
-const SUPABASE_KEY = "sb_publishable_4Q_VqvRZC3d6ffn3uYfFvg_Sj1nB0Xb";
-const FLUSH_MS = 150;
-function useSharedState(key, initial) {
-  const [data, setDataState] = reactExports.useState(initial);
+function rowToBooking(r, payments, segments) {
+  return {
+    id: r.id,
+    roomNumber: r.room_number,
+    guestName: [r.guest_last_name, r.guest_first_name, r.guest_middle_name].filter(Boolean).join(" "),
+    guestLastName: r.guest_last_name,
+    guestFirstName: r.guest_first_name,
+    guestMiddleName: r.guest_middle_name,
+    guestPhone: r.guest_phone,
+    guestEmail: r.guest_email,
+    guestWhatsapp: r.guest_whatsapp,
+    guestTelegram: r.guest_telegram,
+    guestInstagram: r.guest_instagram,
+    guestCount: r.guest_count,
+    checkIn: r.check_in,
+    checkOut: r.check_out,
+    checkInHalfDay: r.check_in_half_day,
+    checkOutHalfDay: r.check_out_half_day,
+    checkInLateNight: r.check_in_late_night,
+    status: r.status,
+    notes: r.notes,
+    price: r.price ?? void 0,
+    paymentType: r.payment_type ?? void 0,
+    paymentTiming: r.payment_timing ?? void 0,
+    paymentAmount: r.payment_amount ?? void 0,
+    paymentConfirmed: r.payment_confirmed,
+    paymentConfirmedAt: r.payment_confirmed_at ?? void 0,
+    bedIndex: r.bed_index ?? void 0,
+    additionalBeds: r.additional_beds ?? [],
+    residency: r.residency,
+    bookingChannel: r.booking_channel,
+    createdAt: r.created_at,
+    payments: payments.map((p) => ({ amount: Number(p.amount), at: p.paid_at, method: p.method })),
+    segments: segments.length ? segments.sort((a, b) => a.sort_order - b.sort_order).map((s) => ({
+      roomNumber: s.room_number,
+      categoryId: s.category_id,
+      from: s.from_date,
+      to: s.to_date,
+      nights: s.nights,
+      guestCount: s.guest_count,
+      perNightRate: Number(s.per_night_rate),
+      price: Number(s.price)
+    })) : void 0
+  };
+}
+function bookingToRow(b) {
+  return {
+    id: b.id,
+    room_number: b.roomNumber,
+    guest_last_name: b.guestLastName ?? "",
+    guest_first_name: b.guestFirstName ?? "",
+    guest_middle_name: b.guestMiddleName ?? "",
+    guest_phone: b.guestPhone,
+    guest_email: b.guestEmail,
+    guest_whatsapp: b.guestWhatsapp ?? "",
+    guest_telegram: b.guestTelegram ?? "",
+    guest_instagram: b.guestInstagram ?? "",
+    guest_count: b.guestCount,
+    check_in: b.checkIn,
+    check_out: b.checkOut,
+    check_in_half_day: !!b.checkInHalfDay,
+    check_out_half_day: !!b.checkOutHalfDay,
+    check_in_late_night: !!b.checkInLateNight,
+    status: b.status,
+    notes: b.notes ?? "",
+    price: b.price ?? null,
+    payment_type: b.paymentType ?? null,
+    payment_timing: b.paymentTiming ?? null,
+    payment_amount: b.paymentAmount ?? null,
+    payment_confirmed: !!b.paymentConfirmed,
+    payment_confirmed_at: b.paymentConfirmedAt ?? null,
+    bed_index: b.bedIndex ?? null,
+    additional_beds: b.additionalBeds ?? [],
+    residency: b.residency ?? "resident",
+    booking_channel: b.bookingChannel ?? "offline"
+  };
+}
+async function syncPayments(b) {
+  const local = b.payments ?? [];
+  if (!local.length) return;
+  const { data: existing } = await supabase.from("booking_payments").select("amount, method, paid_at").eq("booking_id", b.id);
+  const existingCount = existing?.length ?? 0;
+  if (local.length <= existingCount) return;
+  const toInsert = local.slice(existingCount).map((p) => ({
+    booking_id: b.id,
+    amount: p.amount,
+    method: p.method,
+    paid_at: p.at
+  }));
+  await supabase.from("booking_payments").insert(toInsert);
+}
+async function syncSegments(b) {
+  await supabase.from("booking_segments").delete().eq("booking_id", b.id);
+  const segs = b.segments ?? [];
+  if (!segs.length) return;
+  await supabase.from("booking_segments").insert(
+    segs.map((s, i) => ({
+      booking_id: b.id,
+      room_number: s.roomNumber,
+      category_id: s.categoryId,
+      from_date: s.from,
+      to_date: s.to,
+      nights: s.nights,
+      guest_count: s.guestCount,
+      per_night_rate: s.perNightRate,
+      price: s.price,
+      sort_order: i
+    }))
+  );
+}
+function useBookingsStore() {
+  const [data, setDataState] = reactExports.useState([]);
   const [ready, setReady] = reactExports.useState(false);
-  const versionRef = reactExports.useRef(0);
-  const committedRef = reactExports.useRef(initial);
-  const pendingUpdatersRef = reactExports.useRef([]);
-  const flushTimerRef = reactExports.useRef(null);
-  const localEchoRef = reactExports.useRef(0);
-  const flushingRef = reactExports.useRef(false);
+  const load = reactExports.useCallback(async () => {
+    const { data: rows } = await supabase.from("bookings").select("*").order("check_in");
+    const ids = (rows ?? []).map((r) => r.id);
+    const [{ data: payments }, { data: segments }] = await Promise.all([
+      ids.length ? supabase.from("booking_payments").select("*").in("booking_id", ids) : Promise.resolve({ data: [] }),
+      ids.length ? supabase.from("booking_segments").select("*").in("booking_id", ids) : Promise.resolve({ data: [] })
+    ]);
+    const paymentsByBooking = /* @__PURE__ */ new Map();
+    for (const p of payments ?? []) paymentsByBooking.set(p.booking_id, [...paymentsByBooking.get(p.booking_id) ?? [], p]);
+    const segmentsByBooking = /* @__PURE__ */ new Map();
+    for (const s of segments ?? []) segmentsByBooking.set(s.booking_id, [...segmentsByBooking.get(s.booking_id) ?? [], s]);
+    setDataState((rows ?? []).map((r) => rowToBooking(r, paymentsByBooking.get(r.id) ?? [], segmentsByBooking.get(r.id) ?? [])));
+    setReady(true);
+  }, []);
   reactExports.useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      const { data: row, error } = await supabase.from("hotel_app_state").select("state_data, version").eq("state_key", key).maybeSingle();
-      if (cancelled) return;
-      if (!error && row) {
-        versionRef.current = Number(row.version) || 0;
-        committedRef.current = row.state_data;
-        setDataState(row.state_data);
-      } else {
-        const { data: seeded } = await supabase.rpc("hotel_app_state_cas", { p_key: key, p_expected_version: 0, p_state_data: initial }).select().maybeSingle();
-        if (seeded) {
-          versionRef.current = Number(seeded.version) || 1;
-          committedRef.current = seeded.state_data ?? initial;
-        }
-      }
-      setReady(true);
-    })();
-    return () => {
-      cancelled = true;
-    };
-  }, [key]);
-  reactExports.useEffect(() => {
-    const channel = supabase.channel(`hotel_app_state:${key}`).on(
-      "postgres_changes",
-      { event: "*", schema: "public", table: "hotel_app_state", filter: `state_key=eq.${key}` },
-      (payload) => {
-        const row = payload.new ?? payload.old;
-        if (!row) return;
-        const v = Number(row.version) || 0;
-        if (v <= versionRef.current) return;
-        if (localEchoRef.current && v === localEchoRef.current) {
-          localEchoRef.current = 0;
-          versionRef.current = v;
-          committedRef.current = row.state_data;
-          return;
-        }
-        versionRef.current = v;
-        committedRef.current = row.state_data;
-        if (pendingUpdatersRef.current.length > 0) {
-          let next = row.state_data;
-          for (const fn of pendingUpdatersRef.current) next = fn(next);
-          setDataState(next);
-        } else {
-          setDataState(row.state_data);
-        }
-      }
-    ).subscribe();
+    void load();
+    const channel = supabase.channel("bookings-realtime").on("postgres_changes", { event: "*", schema: "public", table: "bookings" }, () => void load()).on("postgres_changes", { event: "*", schema: "public", table: "booking_payments" }, () => void load()).on("postgres_changes", { event: "*", schema: "public", table: "booking_segments" }, () => void load()).subscribe();
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [key]);
-  const flush = reactExports.useCallback(async () => {
-    if (flushingRef.current) return;
-    if (pendingUpdatersRef.current.length === 0) return;
-    flushingRef.current = true;
-    try {
-      for (let attempt = 0; attempt < 6; attempt++) {
-        const updaters = pendingUpdatersRef.current;
-        if (updaters.length === 0) return;
-        const expected = versionRef.current;
-        let candidate = committedRef.current;
-        for (const fn of updaters) candidate = fn(candidate);
-        const { data: rows, error } = await supabase.rpc("hotel_app_state_cas", {
-          p_key: key,
-          p_expected_version: expected,
-          p_state_data: candidate
-        });
-        if (error) {
-          console.error("[hotel-sync] cas error", error);
-          return;
-        }
-        const row = Array.isArray(rows) ? rows[0] : rows;
-        if (!row) return;
-        const newV = Number(row.version) || 0;
-        if (newV === expected + 1) {
-          pendingUpdatersRef.current = pendingUpdatersRef.current.slice(updaters.length);
-          versionRef.current = newV;
-          committedRef.current = candidate;
-          localEchoRef.current = newV;
-          if (pendingUpdatersRef.current.length === 0) return;
-          continue;
-        }
-        versionRef.current = newV;
-        committedRef.current = row.state_data;
-      }
-      if (pendingUpdatersRef.current.length > 0) {
-        let next = committedRef.current;
-        for (const fn of pendingUpdatersRef.current) next = fn(next);
-        setDataState(next);
-        flushTimerRef.current = setTimeout(() => {
-          void flush();
-        }, FLUSH_MS * 4);
-      }
-    } finally {
-      flushingRef.current = false;
-    }
-  }, [key]);
+  }, [load]);
   const setData = reactExports.useCallback((updater) => {
-    const fn = typeof updater === "function" ? updater : () => updater;
-    pendingUpdatersRef.current.push(fn);
-    setDataState((prev) => fn(prev));
-    if (flushTimerRef.current) clearTimeout(flushTimerRef.current);
-    flushTimerRef.current = setTimeout(() => {
-      void flush();
-    }, FLUSH_MS);
-  }, [flush]);
-  const flushNow = reactExports.useCallback(() => {
-    if (pendingUpdatersRef.current.length === 0) return;
-    let candidate = committedRef.current;
-    for (const fn of pendingUpdatersRef.current) candidate = fn(candidate);
-    try {
-      void fetch(`${SUPABASE_URL}/rest/v1/rpc/hotel_app_state_cas`, {
-        method: "POST",
-        keepalive: true,
-        headers: {
-          "Content-Type": "application/json",
-          apikey: SUPABASE_KEY,
-          Authorization: `Bearer ${SUPABASE_KEY}`
-        },
-        body: JSON.stringify({
-          p_key: key,
-          p_expected_version: versionRef.current,
-          p_state_data: candidate
-        })
+    setDataState((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      const prevIds = new Set(prev.map((b) => b.id));
+      const nextIds = new Set(next.map((b) => b.id));
+      const toInsert = next.filter((b) => !prevIds.has(b.id));
+      const toDelete = prev.filter((b) => !nextIds.has(b.id));
+      const toUpdate = next.filter((b) => {
+        const old = prev.find((p) => p.id === b.id);
+        return old && JSON.stringify(old) !== JSON.stringify(b);
       });
-    } catch {
-    }
-  }, [key]);
-  return { data, setData, ready, flushNow };
+      if (toInsert.length) {
+        void supabase.from("bookings").insert(toInsert.map(bookingToRow)).then(() => {
+          for (const b of toInsert) {
+            void syncPayments(b);
+            void syncSegments(b);
+          }
+        });
+      }
+      if (toUpdate.length) {
+        for (const b of toUpdate) {
+          void supabase.from("bookings").update(bookingToRow(b)).eq("id", b.id).then(() => {
+            void syncPayments(b);
+            void syncSegments(b);
+          });
+        }
+      }
+      if (toDelete.length) void supabase.from("bookings").delete().in("id", toDelete.map((b) => b.id));
+      return next;
+    });
+  }, []);
+  return { data, setData, ready };
 }
 function bookingSignature(b) {
   return [b.roomNumber, b.bedIndex ?? "room", b.checkIn, b.checkOut, b.status, (b.guestName || "").trim().toLowerCase()].join("|");
-}
-function isLegacySampleBooking(b) {
-  return /^b\d+$/.test(String(b.id));
 }
 function normalizeBookings(input) {
   if (!Array.isArray(input)) return [];
@@ -735,7 +703,6 @@ function normalizeBookings(input) {
     if (!item || typeof item !== "object") continue;
     const b = item;
     if (!b.id || !b.roomNumber || !b.checkIn || !b.checkOut || !b.status) continue;
-    if (isLegacySampleBooking(b)) continue;
     byId.set(String(b.id), b);
   }
   const bySig = /* @__PURE__ */ new Map();
@@ -774,14 +741,7 @@ function applyAutoCheckout(list) {
 }
 function useBookings() {
   const { t } = useI18n();
-  const { data, setData, ready } = useSharedState("bookings", []);
-  reactExports.useEffect(() => {
-    if (!ready) return;
-    if (Array.isArray(data) && data.length === 0) {
-      const seed = normalizeBookings(generateSampleBookings());
-      if (seed.length) setData(seed);
-    }
-  }, [ready, data, setData]);
+  const { data, setData } = useBookingsStore();
   reactExports.useEffect(() => {
     const tick = () => setData((prev) => applyAutoCheckout(Array.isArray(prev) ? prev : []));
     const id = window.setInterval(tick, 6e4);
@@ -823,15 +783,43 @@ function useBookings() {
   return { bookings, addBooking, removeBooking, updateBooking };
 }
 const AuditContext = reactExports.createContext(void 0);
+function rowToEvent(r) {
+  return {
+    id: r.id,
+    category: r.category,
+    action: r.action,
+    summary: r.summary,
+    at: r.created_at,
+    actor: { username: r.actor_username, role: r.actor_role, adminId: r.actor_staff_id },
+    details: r.metadata && Object.keys(r.metadata).length ? r.metadata : void 0
+  };
+}
 function AuditProvider({ children }) {
-  const { data, setData } = useSharedState("audit", []);
-  const events = reactExports.useMemo(() => Array.isArray(data) ? data : [], [data]);
+  const [events, setEvents] = reactExports.useState([]);
+  reactExports.useEffect(() => {
+    (async () => {
+      const { data } = await supabase.from("audit_log").select("*").order("created_at", { ascending: false }).limit(500);
+      setEvents((data ?? []).map(rowToEvent));
+    })();
+    const channel = supabase.channel("audit_log-realtime").on("postgres_changes", { event: "INSERT", schema: "public", table: "audit_log" }, (payload) => {
+      setEvents((prev) => [rowToEvent(payload.new), ...prev].slice(0, 500));
+    }).subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
   const log = reactExports.useCallback((e) => {
-    const ev = { ...e, id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`, at: (/* @__PURE__ */ new Date()).toISOString() };
-    setData((prev) => [ev, ...Array.isArray(prev) ? prev : []].slice(0, 2e3));
-  }, [setData]);
-  const clear = reactExports.useCallback(() => setData([]), [setData]);
-  const value = reactExports.useMemo(() => ({ events, log, clear }), [events, log, clear]);
+    void supabase.from("audit_log").insert({
+      actor_staff_id: e.actor.adminId ?? null,
+      actor_username: e.actor.username,
+      actor_role: e.actor.role,
+      category: e.category,
+      action: e.action,
+      summary: e.summary,
+      metadata: e.details ?? {}
+    });
+  }, []);
+  const value = reactExports.useMemo(() => ({ events, log }), [events, log]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(AuditContext.Provider, { value, children });
 }
 function useAudit() {
@@ -839,359 +827,78 @@ function useAudit() {
   if (!ctx) throw new Error("useAudit must be used within AuditProvider");
   return ctx;
 }
-function normalize(list) {
-  if (!Array.isArray(list)) return [];
-  return list.map((a) => ({
-    id: a?.id ?? `adm_${Math.random().toString(36).slice(2, 9)}`,
-    name: a?.name ?? "",
-    surname: a?.surname ?? "",
-    idNumber: a?.idNumber ?? "",
-    username: a?.username ?? "",
-    password: a?.password ?? "",
-    fingerprintId: a?.fingerprintId ?? "",
-    createdAt: a?.createdAt ?? (/* @__PURE__ */ new Date()).toISOString()
-  }));
-}
-const AdminsContext = reactExports.createContext(void 0);
-function AdminsProvider({ children }) {
-  const { data, setData } = useSharedState("admins", []);
-  const admins = reactExports.useMemo(() => normalize(data), [data]);
-  const addAdmin = reactExports.useCallback((input) => {
-    const rec = {
-      id: `adm_${Date.now().toString(36)}_${Math.random().toString(36).slice(2, 7)}`,
-      name: input.name.trim(),
-      surname: input.surname.trim(),
-      idNumber: input.idNumber.trim(),
-      username: input.username.trim().toLowerCase(),
-      password: input.password,
-      fingerprintId: input.fingerprintId.trim(),
-      createdAt: (/* @__PURE__ */ new Date()).toISOString()
-    };
-    setData((prev) => [rec, ...normalize(prev)]);
-    return rec;
-  }, [setData]);
-  const updateAdmin = reactExports.useCallback((id, patch) => {
-    setData((prev) => normalize(prev).map(
-      (a) => a.id === id ? { ...a, ...patch, username: patch.username ? patch.username.trim().toLowerCase() : a.username } : a
-    ));
-  }, [setData]);
-  const removeAdmin = reactExports.useCallback((id) => {
-    setData((prev) => normalize(prev).filter((a) => a.id !== id));
-  }, [setData]);
-  const findByUsername = reactExports.useCallback((username) => {
-    const u = username.trim().toLowerCase();
-    return admins.find((a) => a.username.toLowerCase() === u);
-  }, [admins]);
-  const value = reactExports.useMemo(() => ({ admins, addAdmin, updateAdmin, removeAdmin, findByUsername }), [admins, addAdmin, updateAdmin, removeAdmin, findByUsername]);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(AdminsContext.Provider, { value, children });
-}
-function useAdmins() {
-  const ctx = reactExports.useContext(AdminsContext);
-  if (!ctx) throw new Error("useAdmins must be used within AdminsProvider");
-  return ctx;
-}
-const AuthHistoryContext = reactExports.createContext(void 0);
-function AuthHistoryProvider({ children }) {
-  const { data, setData, flushNow: flushHistory } = useSharedState("auth-history", []);
-  const history = reactExports.useMemo(
-    () => Array.isArray(data) ? data : [],
-    [data]
-  );
-  const pushHistory = reactExports.useCallback(
-    (ev) => {
-      const full = {
-        ...ev,
-        id: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`
-      };
-      setData(
-        (prev) => [full, ...Array.isArray(prev) ? prev : []].slice(0, 500)
-      );
-    },
-    [setData]
-  );
-  const clearHistory = reactExports.useCallback(() => setData([]), [setData]);
-  const value = reactExports.useMemo(
-    () => ({ history, pushHistory, clearHistory, flushHistory }),
-    [history, pushHistory, clearHistory, flushHistory]
-  );
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(AuthHistoryContext.Provider, { value, children });
-}
-function useAuthHistory() {
-  const ctx = reactExports.useContext(AuthHistoryContext);
-  if (!ctx)
-    throw new Error("useAuthHistory must be used within AuthHistoryProvider");
-  return ctx;
-}
-const STORAGE_KEY$3 = "hotel_shift_session";
-const CHANGE_EVENT = "hotel-shift-changed";
-const ShiftContext = reactExports.createContext(void 0);
-function computeShiftWindow(at = /* @__PURE__ */ new Date()) {
-  const h = at.getHours();
-  const startOfDay6 = new Date(at);
-  startOfDay6.setHours(6, 0, 0, 0);
-  const startOfDay18 = new Date(at);
-  startOfDay18.setHours(18, 0, 0, 0);
-  if (h >= 6 && h < 18) {
-    return { kind: "day", start: startOfDay6, end: startOfDay18 };
-  }
-  if (h >= 18) {
-    const end = new Date(startOfDay6);
-    end.setDate(end.getDate() + 1);
-    return { kind: "night", start: startOfDay18, end };
-  }
-  const start = new Date(startOfDay18);
-  start.setDate(start.getDate() - 1);
-  return { kind: "night", start, end: startOfDay6 };
-}
-function loadSession() {
-  if (typeof window === "undefined") return null;
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY$3);
-    if (!raw) return null;
-    const parsed = JSON.parse(raw);
-    if (!parsed.name || !parsed.startISO || !parsed.endISO || !parsed.kind) return null;
-    return parsed;
-  } catch {
-    return null;
-  }
-}
-const subscribers = /* @__PURE__ */ new Set();
-let tickStarted = false;
-function ensureTicker() {
-  if (tickStarted || typeof window === "undefined") return;
-  tickStarted = true;
-  window.setInterval(() => {
-    const n = /* @__PURE__ */ new Date();
-    subscribers.forEach((s) => s(n));
-  }, 1e3);
-}
-function useNow() {
-  const [now, setNow] = reactExports.useState(() => /* @__PURE__ */ new Date());
-  reactExports.useEffect(() => {
-    ensureTicker();
-    subscribers.add(setNow);
-    return () => {
-      subscribers.delete(setNow);
-    };
-  }, []);
-  return now;
-}
-function ShiftProvider({ children }) {
-  const [session, setSessionState] = reactExports.useState(() => loadSession());
-  const setSession = reactExports.useCallback((s) => {
-    setSessionState(s);
-    if (typeof window === "undefined") return;
-    if (s) window.localStorage.setItem(STORAGE_KEY$3, JSON.stringify(s));
-    else window.localStorage.removeItem(STORAGE_KEY$3);
-    window.dispatchEvent(new Event(CHANGE_EVENT));
-  }, []);
-  reactExports.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const reload = () => setSessionState(loadSession());
-    const onStorage = (e) => {
-      if (e.key === STORAGE_KEY$3) reload();
-    };
-    window.addEventListener("storage", onStorage);
-    window.addEventListener(CHANGE_EVENT, reload);
-    return () => {
-      window.removeEventListener("storage", onStorage);
-      window.removeEventListener(CHANGE_EVENT, reload);
-    };
-  }, []);
-  const value = reactExports.useMemo(
-    () => ({ session, setSession, computeWindow: computeShiftWindow }),
-    [session, setSession]
-  );
-  reactExports.useRef(null);
-  return /* @__PURE__ */ jsxRuntimeExports.jsx(ShiftContext.Provider, { value, children });
-}
-function useShift() {
-  const ctx = reactExports.useContext(ShiftContext);
-  if (!ctx) throw new Error("useShift must be used within ShiftProvider");
-  return ctx;
-}
-function formatRemaining(ms) {
-  if (ms <= 0) return "00:00:00";
-  const total = Math.floor(ms / 1e3);
-  const h = Math.floor(total / 3600);
-  const m = Math.floor(total % 3600 / 60);
-  const s = total % 60;
-  return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
-}
-const STORAGE_KEY$2 = "hotel_auth_user";
-const CREDENTIALS = {
-  admin: { password: "SaexatTestAdminpanel003", role: "admin" }
-};
 const AuthContext = reactExports.createContext(void 0);
+async function loadAuthUser(userId) {
+  const { data: staffRow } = await supabase.from("staff").select("*").eq("id", userId).single();
+  if (!staffRow) return null;
+  return {
+    username: staffRow.username,
+    role: staffRow.role,
+    adminId: staffRow.id,
+    displayName: `${staffRow.first_name} ${staffRow.last_name}`.trim(),
+    loginAt: (/* @__PURE__ */ new Date()).toISOString()
+  };
+}
 function AuthProvider({ children }) {
-  const { findByUsername } = useAdmins();
   const { log } = useAudit();
-  const { history, pushHistory, clearHistory, flushHistory } = useAuthHistory();
   const [ready, setReady] = reactExports.useState(false);
   const [user, setUser] = reactExports.useState(null);
   reactExports.useEffect(() => {
-    try {
-      const raw = sessionStorage.getItem(STORAGE_KEY$2);
-      const parsed = raw ? JSON.parse(raw) : null;
-      if (parsed && parsed.role === "admin" && parsed.loginAt) {
-        const shiftEnd = computeShiftWindow(new Date(parsed.loginAt)).end;
-        if ((/* @__PURE__ */ new Date()).getTime() >= shiftEnd.getTime()) {
-          try {
-            pushHistory({
-              username: parsed.username,
-              role: "admin",
-              action: "logout",
-              at: shiftEnd.toISOString(),
-              adminId: parsed.adminId,
-              displayName: parsed.displayName
-            });
-            log({
-              actor: { username: parsed.username, role: "admin", adminId: parsed.adminId ?? null },
-              category: "auth",
-              action: "auth.logout",
-              summary: `${parsed.displayName ?? parsed.username} was automatically signed out (shift ended)`
-            });
-          } catch {
-          }
-          setUser(null);
-          try {
-            sessionStorage.removeItem(STORAGE_KEY$2);
-          } catch {
-          }
-          try {
-            localStorage.removeItem(STORAGE_KEY$2);
-          } catch {
-          }
-          setReady(true);
-          return;
-        }
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      const sessionUser = data.session?.user;
+      const next = sessionUser ? await loadAuthUser(sessionUser.id) : null;
+      if (!cancelled) {
+        setUser(next);
+        setReady(true);
       }
-      setUser(parsed ?? null);
-      try {
-        localStorage.removeItem(STORAGE_KEY$2);
-      } catch {
+    })();
+    const { data: sub } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (event === "SIGNED_OUT") {
+        setUser(null);
+        return;
       }
-    } catch {
-      setUser(null);
-    } finally {
-      setReady(true);
-    }
-  }, []);
-  reactExports.useEffect(() => {
-    if (user) sessionStorage.setItem(STORAGE_KEY$2, JSON.stringify(user));
-    else sessionStorage.removeItem(STORAGE_KEY$2);
-  }, [user]);
-  reactExports.useEffect(() => {
-    if (typeof window === "undefined") return;
-    const handler = () => {
-      if (!user) return;
-      try {
-        pushHistory({
-          username: user.username,
-          role: user.role,
-          action: "logout",
-          at: (/* @__PURE__ */ new Date()).toISOString(),
-          adminId: user.adminId,
-          displayName: user.displayName
-        });
-        flushHistory();
-      } catch {
+      if (session?.user) {
+        const next = await loadAuthUser(session.user.id);
+        setUser(next);
       }
-      try {
-        sessionStorage.removeItem(STORAGE_KEY$2);
-      } catch {
-      }
-    };
-    window.addEventListener("pagehide", handler);
-    window.addEventListener("beforeunload", handler);
+    });
     return () => {
-      window.removeEventListener("pagehide", handler);
-      window.removeEventListener("beforeunload", handler);
+      cancelled = true;
+      sub.subscription.unsubscribe();
     };
-  }, [user, pushHistory, flushHistory]);
-  const login = reactExports.useCallback(
-    (username, password) => {
-      const u = username.trim().toLowerCase();
-      const admin = findByUsername(u);
-      if (admin && admin.password === password) {
-        const at2 = (/* @__PURE__ */ new Date()).toISOString();
-        const next2 = {
-          username: admin.username,
-          role: "admin",
-          adminId: admin.id,
-          displayName: `${admin.name} ${admin.surname}`.trim(),
-          loginAt: at2
-        };
-        setUser(next2);
-        pushHistory({
-          username: next2.username,
-          role: "admin",
-          action: "login",
-          at: at2,
-          adminId: admin.id,
-          displayName: next2.displayName
-        });
-        log({
-          actor: { username: next2.username, role: "admin", adminId: admin.id },
-          category: "auth",
-          action: "auth.login",
-          summary: `${next2.displayName} signed in`
-        });
-        return { ok: true, role: "admin" };
-      }
-      const entry = CREDENTIALS[u];
-      if (!entry || entry.password !== password) {
-        return { ok: false, error: "Invalid username or password" };
-      }
-      const at = (/* @__PURE__ */ new Date()).toISOString();
-      const next = {
-        username: u,
-        role: entry.role,
-        displayName: u,
-        loginAt: at
-      };
-      setUser(next);
-      pushHistory({
-        username: u,
-        role: entry.role,
-        action: "login",
-        at,
-        displayName: u
-      });
-      log({
-        actor: { username: u, role: entry.role },
-        category: "auth",
-        action: "auth.login",
-        summary: `${u} signed in`
-      });
-      return { ok: true, role: entry.role };
-    },
-    [findByUsername, log, pushHistory]
-  );
+  }, []);
+  const login = reactExports.useCallback(async (username, password) => {
+    const u = username.trim().toLowerCase();
+    const { data: email } = await supabase.rpc("resolve_staff_email", { p_username: u });
+    if (!email) return { ok: false, error: "Invalid username or password" };
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.session) return { ok: false, error: "Invalid username or password" };
+    const next = await loadAuthUser(data.user.id);
+    if (!next) return { ok: false, error: "Invalid username or password" };
+    setUser(next);
+    log({
+      actor: { username: next.username, role: next.role, adminId: next.adminId ?? null },
+      category: "auth",
+      action: "auth.login",
+      summary: `${next.displayName} signed in`
+    });
+    return { ok: true, role: next.role };
+  }, [log]);
   const logout = reactExports.useCallback(() => {
     if (user) {
-      const at = (/* @__PURE__ */ new Date()).toISOString();
-      pushHistory({
-        username: user.username,
-        role: user.role,
-        action: "logout",
-        at,
-        adminId: user.adminId,
-        displayName: user.displayName
-      });
       log({
-        actor: { username: user.username, role: user.role, adminId: user.adminId },
+        actor: { username: user.username, role: user.role, adminId: user.adminId ?? null },
         category: "auth",
         action: "auth.logout",
         summary: `${user.displayName ?? user.username} signed out`
       });
     }
+    void supabase.auth.signOut();
     setUser(null);
-  }, [user, log, pushHistory]);
-  const value = reactExports.useMemo(
-    () => ({ user, ready, login, logout, history, clearHistory }),
-    [user, ready, login, logout, history, clearHistory]
-  );
+  }, [user, log]);
+  const value = reactExports.useMemo(() => ({ user, ready, login, logout }), [user, ready, login, logout]);
   return /* @__PURE__ */ jsxRuntimeExports.jsx(AuthContext.Provider, { value, children });
 }
 function useAuth() {
@@ -1288,6 +995,72 @@ function useBookingsContext() {
   if (!ctx) throw new Error("useBookingsContext must be used inside BookingsProvider");
   return ctx;
 }
+const ROOM_CATEGORIES = [
+  { id: "standard-double", label: { en: "Standard Double", ru: "Стандарт Двухместный", uz: "Standart Ikki kishilik" }, short: "Std Dbl", maxGuests: 2 },
+  { id: "standard-twin", label: { en: "Standard Twin", ru: "Стандарт Твин", uz: "Standart Twin" }, short: "Std Twin", maxGuests: 2 },
+  { id: "standard-triple", label: { en: "Standard Triple", ru: "Стандарт Трёхместный", uz: "Standart Uch kishilik" }, short: "Std Trpl", maxGuests: 3 },
+  { id: "standard-quadruple", label: { en: "Standard Quadruple", ru: "Стандарт Четырёхместный", uz: "Standart To'rt kishilik" }, short: "Std Quad", maxGuests: 4 },
+  { id: "deluxe-double", label: { en: "Deluxe Double", ru: "Делюкс Двухместный", uz: "Deluxe Ikki kishilik" }, short: "Dlx Dbl", maxGuests: 2 },
+  { id: "deluxe-twin", label: { en: "Deluxe Twin", ru: "Делюкс Твин", uz: "Deluxe Twin" }, short: "Dlx Twin", maxGuests: 2 }
+];
+const ROOMS_PER_CATEGORY = 5;
+const BOOKING_STATUSES = {
+  confirmed: { color: "#3B82F6", bg: "bg-blue-500", border: "border-solid border-blue-600", opacity: "opacity-100", label: { en: "Confirmed", ru: "Подтверждено", uz: "Tasdiqlangan" }, icon: "✔", tailwindBg: "bg-blue-50", tailwindText: "text-blue-700", tailwindBorder: "border-blue-200" },
+  pending: { color: "#F59E0B", bg: "bg-amber-500", border: "border-solid border-amber-600", opacity: "opacity-100", label: { en: "Pending", ru: "Ожидание", uz: "Kutilmoqda" }, icon: "⏳", tailwindBg: "bg-amber-50", tailwindText: "text-amber-700", tailwindBorder: "border-amber-200" },
+  booked: { color: "#8B5CF6", bg: "bg-violet-500", border: "border-solid border-violet-600", opacity: "opacity-100", label: { en: "Booked", ru: "Забронировано", uz: "Band qilingan" }, icon: "📋", tailwindBg: "bg-violet-50", tailwindText: "text-violet-700", tailwindBorder: "border-violet-200" },
+  "in-house": { color: "#10B981", bg: "bg-emerald-500", border: "border-solid border-emerald-600", opacity: "opacity-100", label: { en: "In House", ru: "Проживает", uz: "Ichkarida" }, icon: "🛏", tailwindBg: "bg-emerald-50", tailwindText: "text-emerald-700", tailwindBorder: "border-emerald-200" },
+  "checked-out": { color: "#6B7280", bg: "bg-gray-400/60", border: "border-solid border-gray-300", opacity: "opacity-60", label: { en: "Checked Out", ru: "Выехал", uz: "Chiqib ketgan" }, icon: "✓", tailwindBg: "bg-gray-100", tailwindText: "text-gray-600", tailwindBorder: "border-gray-200" },
+  maintenance: { color: "#EF4444", bg: "bg-red-500", border: "border-solid border-red-600", opacity: "opacity-90", label: { en: "Maintenance", ru: "Обслуживание", uz: "Texnik xizmat" }, icon: "🔧", tailwindBg: "bg-red-50", tailwindText: "text-red-700", tailwindBorder: "border-red-200" },
+  dirty: { color: "#EF4444", bg: "bg-red-500", border: "border-solid border-red-600", opacity: "opacity-90", label: { en: "Dirty", ru: "Грязный", uz: "Iflos" }, icon: "🧹", tailwindBg: "bg-red-50", tailwindText: "text-red-700", tailwindBorder: "border-red-200" },
+  cleaned: { color: "#9CA3AF", bg: "bg-gray-400/60", border: "border-solid border-gray-300", opacity: "opacity-60", label: { en: "Cleaned", ru: "Убрано", uz: "Tozalangan" }, icon: "✨", tailwindBg: "bg-gray-100", tailwindText: "text-gray-600", tailwindBorder: "border-gray-200" }
+};
+function isRoomDirty(roomNumber, bookings) {
+  return bookings.some((b) => b.roomNumber === roomNumber && b.status === "dirty");
+}
+function formatGuestName(b) {
+  const last = (b.guestLastName || "").trim();
+  const first = (b.guestFirstName || "").trim();
+  const middle = (b.guestMiddleName || "").trim();
+  if (last || first || middle) {
+    return [last, first, middle].filter(Boolean).join(" ");
+  }
+  return (b.guestName || "").trim();
+}
+function useHotelSettings(key, initial) {
+  const [data, setDataState] = reactExports.useState(initial);
+  const [ready, setReady] = reactExports.useState(false);
+  const writeTimer = reactExports.useRef(null);
+  reactExports.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const { data: row } = await supabase.from("hotel_settings").select("data").eq("key", key).maybeSingle();
+      if (!cancelled) {
+        setDataState(row?.data ?? initial);
+        setReady(true);
+      }
+    })();
+    const channel = supabase.channel(`hotel_settings:${key}`).on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "hotel_settings", filter: `key=eq.${key}` },
+      (payload) => setDataState(payload.new.data)
+    ).subscribe();
+    return () => {
+      cancelled = true;
+      supabase.removeChannel(channel);
+    };
+  }, [key]);
+  const setData = reactExports.useCallback((updater) => {
+    setDataState((prev) => {
+      const next = typeof updater === "function" ? updater(prev) : updater;
+      if (writeTimer.current) clearTimeout(writeTimer.current);
+      writeTimer.current = setTimeout(() => {
+        void supabase.from("hotel_settings").update({ data: next }).eq("key", key);
+      }, 150);
+      return next;
+    });
+  }, [key]);
+  return { data, setData, ready };
+}
 function normalizeRate(raw, maxGuests = 1) {
   const slots = Math.max(1, Math.floor(maxGuests || 1));
   const toArr = (v) => {
@@ -1329,7 +1102,7 @@ function HotelGridProvider({ children }) {
     });
     return rooms2;
   }, []);
-  const { data, setData } = useSharedState("grid", INITIAL);
+  const { data, setData } = useHotelSettings("grid", INITIAL);
   const removedCategoryIds = reactExports.useMemo(() => new Set(data.removedCategoryIds ?? []), [data.removedCategoryIds]);
   const removedRoomNumbers = reactExports.useMemo(() => new Set(data.removedRoomNumbers ?? []), [data.removedRoomNumbers]);
   const categories = reactExports.useMemo(
@@ -1407,11 +1180,11 @@ function useHotelGrid() {
   if (!ctx) throw new Error("useHotelGrid must be used inside HotelGridProvider");
   return ctx;
 }
-const STORAGE_KEY$1 = "sayohat-panel-theme";
+const STORAGE_KEY$2 = "sayohat-panel-theme";
 const ThemeContext = reactExports.createContext(null);
 function readTheme() {
   if (typeof window === "undefined") return "light";
-  return window.localStorage.getItem(STORAGE_KEY$1) === "dark" ? "dark" : "light";
+  return window.localStorage.getItem(STORAGE_KEY$2) === "dark" ? "dark" : "light";
 }
 function applyTheme(theme) {
   if (typeof document === "undefined") return;
@@ -1421,12 +1194,12 @@ function ThemeProvider({ children }) {
   const [theme, setThemeState] = reactExports.useState(readTheme);
   reactExports.useEffect(() => {
     applyTheme(theme);
-    if (typeof window !== "undefined") window.localStorage.setItem(STORAGE_KEY$1, theme);
+    if (typeof window !== "undefined") window.localStorage.setItem(STORAGE_KEY$2, theme);
   }, [theme]);
   reactExports.useEffect(() => {
     if (typeof window === "undefined") return;
     const onStorage = (event) => {
-      if (event.key === STORAGE_KEY$1) setThemeState(event.newValue === "dark" ? "dark" : "light");
+      if (event.key === STORAGE_KEY$2) setThemeState(event.newValue === "dark" ? "dark" : "light");
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
@@ -1440,6 +1213,130 @@ function useTheme() {
   const context = reactExports.useContext(ThemeContext);
   if (!context) throw new Error("useTheme must be used inside ThemeProvider");
   return context;
+}
+const STORAGE_KEY$1 = "hotel_shift_session";
+const CHANGE_EVENT = "hotel-shift-changed";
+const ShiftContext = reactExports.createContext(void 0);
+function computeShiftWindow(at = /* @__PURE__ */ new Date()) {
+  const h = at.getHours();
+  const startOfDay6 = new Date(at);
+  startOfDay6.setHours(6, 0, 0, 0);
+  const startOfDay18 = new Date(at);
+  startOfDay18.setHours(18, 0, 0, 0);
+  if (h >= 6 && h < 18) {
+    return { kind: "day", start: startOfDay6, end: startOfDay18 };
+  }
+  if (h >= 18) {
+    const end = new Date(startOfDay6);
+    end.setDate(end.getDate() + 1);
+    return { kind: "night", start: startOfDay18, end };
+  }
+  const start = new Date(startOfDay18);
+  start.setDate(start.getDate() - 1);
+  return { kind: "night", start, end: startOfDay6 };
+}
+function loadSession() {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY$1);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed.name || !parsed.startISO || !parsed.endISO || !parsed.kind) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
+const subscribers = /* @__PURE__ */ new Set();
+let tickStarted = false;
+function ensureTicker() {
+  if (tickStarted || typeof window === "undefined") return;
+  tickStarted = true;
+  window.setInterval(() => {
+    const n = /* @__PURE__ */ new Date();
+    subscribers.forEach((s) => s(n));
+  }, 1e3);
+}
+function useNow() {
+  const [now, setNow] = reactExports.useState(() => /* @__PURE__ */ new Date());
+  reactExports.useEffect(() => {
+    ensureTicker();
+    subscribers.add(setNow);
+    return () => {
+      subscribers.delete(setNow);
+    };
+  }, []);
+  return now;
+}
+function ShiftProvider({ children }) {
+  const [session, setSessionState] = reactExports.useState(() => loadSession());
+  const setSession = reactExports.useCallback((s) => {
+    setSessionState(s);
+    if (typeof window === "undefined") return;
+    if (s) window.localStorage.setItem(STORAGE_KEY$1, JSON.stringify(s));
+    else window.localStorage.removeItem(STORAGE_KEY$1);
+    window.dispatchEvent(new Event(CHANGE_EVENT));
+  }, []);
+  reactExports.useEffect(() => {
+    if (typeof window === "undefined") return;
+    const reload = () => setSessionState(loadSession());
+    const onStorage = (e) => {
+      if (e.key === STORAGE_KEY$1) reload();
+    };
+    window.addEventListener("storage", onStorage);
+    window.addEventListener(CHANGE_EVENT, reload);
+    return () => {
+      window.removeEventListener("storage", onStorage);
+      window.removeEventListener(CHANGE_EVENT, reload);
+    };
+  }, []);
+  const value = reactExports.useMemo(
+    () => ({ session, setSession, computeWindow: computeShiftWindow }),
+    [session, setSession]
+  );
+  reactExports.useRef(null);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(ShiftContext.Provider, { value, children });
+}
+function useShift() {
+  const ctx = reactExports.useContext(ShiftContext);
+  if (!ctx) throw new Error("useShift must be used within ShiftProvider");
+  return ctx;
+}
+function formatRemaining(ms) {
+  if (ms <= 0) return "00:00:00";
+  const total = Math.floor(ms / 1e3);
+  const h = Math.floor(total / 3600);
+  const m = Math.floor(total % 3600 / 60);
+  const s = total % 60;
+  return [h, m, s].map((n) => String(n).padStart(2, "0")).join(":");
+}
+const AdminsContext = reactExports.createContext(void 0);
+function AdminsProvider({ children }) {
+  const [admins, setAdmins] = reactExports.useState([]);
+  const refresh = reactExports.useCallback(async () => {
+    const { data } = await supabase.from("staff_directory").select("*").order("created_at", { ascending: false });
+    setAdmins((data ?? []).map((a) => ({
+      id: a.id,
+      name: a.first_name,
+      surname: a.last_name,
+      idNumber: a.id_number ?? "",
+      username: a.username,
+      fingerprintId: a.fingerprint_id ?? "",
+      role: a.role,
+      createdAt: a.created_at
+    })));
+  }, []);
+  reactExports.useEffect(() => {
+    void refresh();
+  }, [refresh]);
+  const findByUsername = reactExports.useCallback((u) => admins.find((a) => a.username === u.trim().toLowerCase()), [admins]);
+  const value = reactExports.useMemo(() => ({ admins, findByUsername, refresh }), [admins, findByUsername, refresh]);
+  return /* @__PURE__ */ jsxRuntimeExports.jsx(AdminsContext.Provider, { value, children });
+}
+function useAdmins() {
+  const ctx = reactExports.useContext(AdminsContext);
+  if (!ctx) throw new Error("useAdmins must be used within AdminsProvider");
+  return ctx;
 }
 const DEFAULTS = {
   logo: "",
@@ -1791,8 +1688,7 @@ function NotificationPanel() {
 const SWEEP_MS = 2e4;
 function ShiftWatcher() {
   const { user, logout } = useAuth();
-  const { history, pushHistory } = useAuthHistory();
-  const { log } = useAudit();
+  const { events, log } = useAudit();
   const timerRef = reactExports.useRef(null);
   reactExports.useEffect(() => {
     if (typeof window === "undefined") return;
@@ -1822,39 +1718,31 @@ function ShiftWatcher() {
     if (typeof window === "undefined") return;
     const sweep = () => {
       const now = Date.now();
+      const authEvents = events.filter((e) => e.category === "auth" && e.actor.role === "admin");
       const latest = /* @__PURE__ */ new Map();
-      for (const ev of history) {
-        if (ev.role !== "admin") continue;
-        const key = ev.adminId ?? ev.username;
+      for (const ev of authEvents) {
+        const key = ev.actor.adminId ?? ev.actor.username;
         const prev = latest.get(key);
         if (!prev || new Date(ev.at).getTime() > new Date(prev.at).getTime()) {
           latest.set(key, ev);
         }
       }
       for (const e of latest.values()) {
-        if (e.action !== "login") continue;
+        if (e.action !== "auth.login") continue;
         const shiftEnd = computeShiftWindow(new Date(e.at)).end;
         if (now < shiftEnd.getTime()) continue;
-        pushHistory({
-          username: e.username,
-          role: "admin",
-          action: "logout",
-          at: shiftEnd.toISOString(),
-          adminId: e.adminId,
-          displayName: e.displayName
-        });
         log({
-          actor: { username: e.username, role: "admin", adminId: e.adminId ?? null },
+          actor: { username: e.actor.username, role: "admin", adminId: e.actor.adminId ?? null },
           category: "auth",
           action: "auth.logout",
-          summary: `${e.displayName ?? e.username} was automatically signed out (shift ended)`
+          summary: `${e.actor.username} was automatically signed out (shift ended)`
         });
       }
     };
     sweep();
     const id = window.setInterval(sweep, SWEEP_MS);
     return () => window.clearInterval(id);
-  }, [history, pushHistory, log]);
+  }, [events, log]);
   return null;
 }
 function PageTransition() {
@@ -1993,29 +1881,29 @@ function RootComponent() {
     /* @__PURE__ */ jsxRuntimeExports.jsx(Toaster, {}),
     /* @__PURE__ */ jsxRuntimeExports.jsx(Toaster$1, {}),
     /* @__PURE__ */ jsxRuntimeExports.jsx(ToastAutoDismiss, {}),
-    /* @__PURE__ */ jsxRuntimeExports.jsx(HotelDetailsProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(AdminsProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(AuditProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(AuthHistoryProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(AuthProvider, { children: [
+    /* @__PURE__ */ jsxRuntimeExports.jsx(HotelDetailsProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(AdminsProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(AuditProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(AuthProvider, { children: [
       /* @__PURE__ */ jsxRuntimeExports.jsx(UserLanguageSync, {}),
       /* @__PURE__ */ jsxRuntimeExports.jsx(BookingsProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(HotelGridProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsx(ShiftProvider, { children: /* @__PURE__ */ jsxRuntimeExports.jsxs(NotificationsProvider, { children: [
         /* @__PURE__ */ jsxRuntimeExports.jsx(ShiftWatcher, {}),
         /* @__PURE__ */ jsxRuntimeExports.jsx(PageTransition, {}),
         /* @__PURE__ */ jsxRuntimeExports.jsx(NotificationPanel, {})
       ] }) }) }) })
-    ] }) }) }) }) })
+    ] }) }) }) })
   ] }) }) }) });
 }
 const $$splitComponentImporter$3 = () => import("./index-OWC4InQQ.mjs");
 const Route$3 = createFileRoute("/")({
   component: lazyRouteComponent($$splitComponentImporter$3, "component")
 });
-const $$splitComponentImporter$2 = () => import("./admin-D0y476Co.mjs");
+const $$splitComponentImporter$2 = () => import("./admin-if4f02zI.mjs");
 const Route$2 = createFileRoute("/admin")({
   component: lazyRouteComponent($$splitComponentImporter$2, "component")
 });
-const $$splitComponentImporter$1 = () => import("./login-DyD9wFdr.mjs");
+const $$splitComponentImporter$1 = () => import("./login-B8xAh6fe.mjs");
 const Route$1 = createFileRoute("/login")({
   component: lazyRouteComponent($$splitComponentImporter$1, "component")
 });
-const $$splitComponentImporter = () => import("./bookings._id.delete-1p72_Q30.mjs");
+const $$splitComponentImporter = () => import("./bookings._id.delete-COiVjAIW.mjs");
 const Route = createFileRoute("/bookings/$id/delete")({
   component: lazyRouteComponent($$splitComponentImporter, "component")
 });
@@ -2078,7 +1966,7 @@ export {
   useBookingsContext as k,
   isRoomDirty as l,
   useAudit as m,
-  useSharedState as n,
+  useHotelSettings as n,
   useAdmins as o,
   Route as p,
   router as r,

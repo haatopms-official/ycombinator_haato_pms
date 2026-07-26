@@ -1,14 +1,13 @@
 import { useCallback, useEffect } from 'react';
-import { Booking, generateSampleBookings } from '@/types/hotel';
+import { Booking } from '@/types/hotel';
 import { differenceInCalendarDays, parseISO, startOfDay } from 'date-fns';
 import { toast } from 'sonner';
 import { useI18n } from './useI18n';
-import { useSharedState } from '@/lib/hotel-sync';
+import { useBookingsStore } from '@/lib/bookings-store';
 
 function bookingSignature(b: Booking): string {
   return [b.roomNumber, b.bedIndex ?? 'room', b.checkIn, b.checkOut, b.status, (b.guestName || '').trim().toLowerCase()].join('|');
 }
-function isLegacySampleBooking(b: Booking): boolean { return /^b\d+$/.test(String(b.id)); }
 
 function normalizeBookings(input: unknown): Booking[] {
   if (!Array.isArray(input)) return [];
@@ -17,7 +16,6 @@ function normalizeBookings(input: unknown): Booking[] {
     if (!item || typeof item !== 'object') continue;
     const b = item as Booking;
     if (!b.id || !b.roomNumber || !b.checkIn || !b.checkOut || !b.status) continue;
-    if (isLegacySampleBooking(b)) continue;
     byId.set(String(b.id), b);
   }
   const bySig = new Map<string, Booking>();
@@ -51,29 +49,14 @@ function bookingsConflict(a: Booking, b: Booking): boolean {
 function findConflict(list: Booking[], candidate: Booking) { return list.find((b) => bookingsConflict(b, candidate)); }
 
 function applyAutoCheckout(list: Booking[]): Booking[] {
-  // Auto-checkout is intentionally disabled.
-  // When the scheduled check-out date/time has passed but the admin has not
-  // checked the guest out, the booking must stay "in-house" so it surfaces as
-  // a critical "missed check-out" alert (red border + notification) instead of
-  // being automatically checked out or extended.
+  // Auto-checkout is intentionally disabled — see original comment in the app.
   return list;
 }
 
-
 export function useBookings() {
   const { t } = useI18n();
-  const { data, setData, ready } = useSharedState<Booking[]>('bookings', []);
+  const { data, setData, ready } = useBookingsStore();
 
-  // Seed sample bookings into the shared row once, when DB is empty
-  useEffect(() => {
-    if (!ready) return;
-    if (Array.isArray(data) && data.length === 0) {
-      const seed = normalizeBookings(generateSampleBookings());
-      if (seed.length) setData(seed);
-    }
-  }, [ready, data, setData]);
-
-  // Daily auto-checkout
   useEffect(() => {
     const tick = () => setData((prev) => applyAutoCheckout(Array.isArray(prev) ? prev : []));
     const id = window.setInterval(tick, 60_000);
@@ -95,7 +78,6 @@ export function useBookings() {
   const removeBooking = useCallback((id: string) => {
     setData((prev) => (Array.isArray(prev) ? prev.filter((b) => b.id !== id) : []));
   }, [setData]);
-
 
   const updateBooking = useCallback((id: string, updates: Partial<Booking>) => {
     let rejected = false;

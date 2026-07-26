@@ -1215,9 +1215,6 @@ function isRedirect(obj) {
 function isResolvedRedirect(obj) {
   return isRedirect(obj) && !!obj.options.href;
 }
-function parseRedirect(obj) {
-  if (obj !== null && typeof obj === "object" && obj.isSerializedRedirect) return redirect(obj);
-}
 function composeRewrites(rewrites) {
   return {
     input: ({ url }) => {
@@ -4703,7 +4700,6 @@ export {
   makeSerovalPlugin as N,
   getStylesheetHref as O,
   isSsrResponse as P,
-  parseRedirect as Q,
   RouterCore as R,
   isDangerousProtocol as a,
   BaseRoute as b,
