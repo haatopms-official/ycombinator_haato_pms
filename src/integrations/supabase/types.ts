@@ -12,49 +12,595 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  public: {
+  graphql_public: {
     Tables: {
-      hotel_app_state: {
-        Row: {
-          state_data: Json
-          state_key: string
-          updated_at: string
-          version: number
-        }
-        Insert: {
-          state_data?: Json
-          state_key: string
-          updated_at?: string
-          version?: number
-        }
-        Update: {
-          state_data?: Json
-          state_key?: string
-          updated_at?: string
-          version?: number
-        }
-        Relationships: []
-      }
+      [_ in never]: never
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      hotel_app_state_cas: {
-        Args: { p_expected_version: number; p_key: string; p_state_data: Json }
-        Returns: {
-          state_data: Json
-          state_key: string
-          updated_at: string
-          version: number
-        }[]
-        SetofOptions: {
-          from: "*"
-          to: "hotel_app_state"
-          isOneToOne: false
-          isSetofReturn: true
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
         }
+        Returns: Json
       }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
+  }
+  public: {
+    Tables: {
+      audit_log: {
+        Row: {
+          action: string
+          actor_role: string
+          actor_staff_id: string | null
+          actor_username: string
+          category: string
+          created_at: string
+          id: string
+          metadata: Json
+          summary: string
+        }
+        Insert: {
+          action: string
+          actor_role: string
+          actor_staff_id?: string | null
+          actor_username: string
+          category: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          summary?: string
+        }
+        Update: {
+          action?: string
+          actor_role?: string
+          actor_staff_id?: string | null
+          actor_username?: string
+          category?: string
+          created_at?: string
+          id?: string
+          metadata?: Json
+          summary?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_log_actor_staff_id_fkey"
+            columns: ["actor_staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "audit_log_actor_staff_id_fkey"
+            columns: ["actor_staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_payments: {
+        Row: {
+          amount: number
+          booking_id: string
+          id: string
+          method: string
+          paid_at: string
+          recorded_by: string | null
+        }
+        Insert: {
+          amount: number
+          booking_id: string
+          id?: string
+          method: string
+          paid_at?: string
+          recorded_by?: string | null
+        }
+        Update: {
+          amount?: number
+          booking_id?: string
+          id?: string
+          method?: string
+          paid_at?: string
+          recorded_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_payments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_payments_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_payments_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "staff_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      booking_segments: {
+        Row: {
+          booking_id: string
+          category_id: string
+          from_date: string
+          guest_count: number
+          id: string
+          nights: number
+          per_night_rate: number
+          price: number
+          room_number: number
+          sort_order: number
+          to_date: string
+        }
+        Insert: {
+          booking_id: string
+          category_id: string
+          from_date: string
+          guest_count?: number
+          id?: string
+          nights?: number
+          per_night_rate: number
+          price: number
+          room_number: number
+          sort_order?: number
+          to_date: string
+        }
+        Update: {
+          booking_id?: string
+          category_id?: string
+          from_date?: string
+          guest_count?: number
+          id?: string
+          nights?: number
+          per_night_rate?: number
+          price?: number
+          room_number?: number
+          sort_order?: number
+          to_date?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_segments_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      bookings: {
+        Row: {
+          additional_beds: number[]
+          bed_index: number | null
+          booking_channel: string
+          check_in: string
+          check_in_half_day: boolean
+          check_in_late_night: boolean
+          check_out: string
+          check_out_half_day: boolean
+          created_at: string
+          created_by: string | null
+          guest_count: number
+          guest_email: string
+          guest_first_name: string
+          guest_instagram: string
+          guest_last_name: string
+          guest_middle_name: string
+          guest_phone: string
+          guest_telegram: string
+          guest_whatsapp: string
+          id: string
+          notes: string
+          payment_amount: number | null
+          payment_confirmed: boolean
+          payment_confirmed_at: string | null
+          payment_timing: string | null
+          payment_type: string | null
+          price: number | null
+          residency: string
+          room_number: number
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          additional_beds?: number[]
+          bed_index?: number | null
+          booking_channel?: string
+          check_in: string
+          check_in_half_day?: boolean
+          check_in_late_night?: boolean
+          check_out: string
+          check_out_half_day?: boolean
+          created_at?: string
+          created_by?: string | null
+          guest_count?: number
+          guest_email?: string
+          guest_first_name?: string
+          guest_instagram?: string
+          guest_last_name?: string
+          guest_middle_name?: string
+          guest_phone?: string
+          guest_telegram?: string
+          guest_whatsapp?: string
+          id?: string
+          notes?: string
+          payment_amount?: number | null
+          payment_confirmed?: boolean
+          payment_confirmed_at?: string | null
+          payment_timing?: string | null
+          payment_type?: string | null
+          price?: number | null
+          residency?: string
+          room_number: number
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          additional_beds?: number[]
+          bed_index?: number | null
+          booking_channel?: string
+          check_in?: string
+          check_in_half_day?: boolean
+          check_in_late_night?: boolean
+          check_out?: string
+          check_out_half_day?: boolean
+          created_at?: string
+          created_by?: string | null
+          guest_count?: number
+          guest_email?: string
+          guest_first_name?: string
+          guest_instagram?: string
+          guest_last_name?: string
+          guest_middle_name?: string
+          guest_phone?: string
+          guest_telegram?: string
+          guest_whatsapp?: string
+          id?: string
+          notes?: string
+          payment_amount?: number | null
+          payment_confirmed?: boolean
+          payment_confirmed_at?: string | null
+          payment_timing?: string | null
+          payment_type?: string | null
+          price?: number | null
+          residency?: string
+          room_number?: number
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "staff_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      guest_documents: {
+        Row: {
+          anketa: Json
+          booking_id: string
+          created_at: string
+          id: string
+          passport: Json
+          passport_scan_path: string | null
+          recorded_by: string | null
+          updated_at: string
+        }
+        Insert: {
+          anketa?: Json
+          booking_id: string
+          created_at?: string
+          id?: string
+          passport?: Json
+          passport_scan_path?: string | null
+          recorded_by?: string | null
+          updated_at?: string
+        }
+        Update: {
+          anketa?: Json
+          booking_id?: string
+          created_at?: string
+          id?: string
+          passport?: Json
+          passport_scan_path?: string | null
+          recorded_by?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "guest_documents_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: true
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_documents_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "guest_documents_recorded_by_fkey"
+            columns: ["recorded_by"]
+            isOneToOne: false
+            referencedRelation: "staff_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      hotel_settings: {
+        Row: {
+          data: Json
+          key: string
+          updated_at: string
+          updated_by: string | null
+        }
+        Insert: {
+          data?: Json
+          key: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Update: {
+          data?: Json
+          key?: string
+          updated_at?: string
+          updated_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "hotel_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "hotel_settings_updated_by_fkey"
+            columns: ["updated_by"]
+            isOneToOne: false
+            referencedRelation: "staff_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      room_categories: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          label_en: string
+          label_ru: string
+          label_uz: string
+          max_guests: number
+          rate_nonresident: number
+          rate_resident: number
+          short_label: string
+          sort_order: number
+          updated_at: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          label_en: string
+          label_ru: string
+          label_uz: string
+          max_guests: number
+          rate_nonresident?: number
+          rate_resident?: number
+          short_label: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          label_en?: string
+          label_ru?: string
+          label_uz?: string
+          max_guests?: number
+          rate_nonresident?: number
+          rate_resident?: number
+          short_label?: string
+          sort_order?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      rooms: {
+        Row: {
+          category_id: string
+          created_at: string
+          floor: number
+          id: string
+          is_active: boolean
+          number: number
+          updated_at: string
+        }
+        Insert: {
+          category_id: string
+          created_at?: string
+          floor: number
+          id?: string
+          is_active?: boolean
+          number: number
+          updated_at?: string
+        }
+        Update: {
+          category_id?: string
+          created_at?: string
+          floor?: number
+          id?: string
+          is_active?: boolean
+          number?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "rooms_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "room_categories"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      shifts: {
+        Row: {
+          ended_at: string | null
+          id: string
+          kind: string
+          staff_id: string
+          started_at: string
+        }
+        Insert: {
+          ended_at?: string | null
+          id?: string
+          kind: string
+          staff_id: string
+          started_at?: string
+        }
+        Update: {
+          ended_at?: string | null
+          id?: string
+          kind?: string
+          staff_id?: string
+          started_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "shifts_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "shifts_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff: {
+        Row: {
+          created_at: string
+          fingerprint_id: string
+          first_name: string
+          id: string
+          id_number: string
+          is_active: boolean
+          last_name: string
+          role: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          fingerprint_id?: string
+          first_name?: string
+          id: string
+          id_number?: string
+          is_active?: boolean
+          last_name?: string
+          role?: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          fingerprint_id?: string
+          first_name?: string
+          id?: string
+          id_number?: string
+          is_active?: boolean
+          last_name?: string
+          role?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+    }
+    Views: {
+      staff_directory: {
+        Row: {
+          created_at: string | null
+          fingerprint_id: string | null
+          first_name: string | null
+          id: string | null
+          id_number: string | null
+          is_active: boolean | null
+          last_name: string | null
+          role: string | null
+          username: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          fingerprint_id?: never
+          first_name?: string | null
+          id?: string | null
+          id_number?: never
+          is_active?: boolean | null
+          last_name?: string | null
+          role?: string | null
+          username?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          fingerprint_id?: never
+          first_name?: string | null
+          id?: string | null
+          id_number?: never
+          is_active?: boolean | null
+          last_name?: string | null
+          role?: string | null
+          username?: string | null
+        }
+        Relationships: []
+      }
+    }
+    Functions: {
+      is_active_staff: { Args: never; Returns: boolean }
+      is_admin: { Args: never; Returns: boolean }
+      resolve_staff_email: { Args: { p_username: string }; Returns: string }
     }
     Enums: {
       [_ in never]: never
@@ -183,6 +729,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {},
   },

@@ -1,5 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { supabase } from '@/integrations/supabase/client';
+import type { Json } from '@/integrations/supabase/types';
 import type { UserRole } from './auth-types';
 
 export interface AuditEvent {
@@ -40,7 +41,7 @@ export function AuditProvider({ children }: { children: ReactNode }) {
   const log = useCallback((e: Omit<AuditEvent, 'id' | 'at'>) => {
     void supabase.from('audit_log').insert({
       actor_staff_id: e.actor.adminId ?? null, actor_username: e.actor.username, actor_role: e.actor.role,
-      category: e.category, action: e.action, summary: e.summary, metadata: e.details ?? {},
+      category: e.category, action: e.action, summary: e.summary, metadata: (e.details ?? {}) as Json,
     });
   }, []);
 

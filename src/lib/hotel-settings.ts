@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-
+import type { Json } from '@/integrations/supabase/types';
 type SettingsKey = 'grid' | 'guests';
 
 export function useHotelSettings<T>(key: SettingsKey, initial: T) {
@@ -25,7 +25,7 @@ export function useHotelSettings<T>(key: SettingsKey, initial: T) {
     setDataState((prev) => {
       const next = typeof updater === 'function' ? (updater as (p: T) => T)(prev) : updater;
       if (writeTimer.current) clearTimeout(writeTimer.current);
-      writeTimer.current = setTimeout(() => { void supabase.from('hotel_settings').update({ data: next }).eq('key', key); }, 150);
+      writeTimer.current = setTimeout(() => { void supabase.from('hotel_settings').update({ data: next as Json }).eq('key', key); }, 150);
       return next;
     });
   }, [key]);
