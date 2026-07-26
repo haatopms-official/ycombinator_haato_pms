@@ -171,7 +171,7 @@ export function HotelGuestAnketaModal({ open, onClose, booking }: AnketaModalPro
   // Guest Details. Result: anything captured anywhere about this booking is
   // already filled in here.
 // Cloud-synced record maps (keyed by booking id) backed by
-  // `public.hotel_app_state`. Same rows for every browser/role.
+// `public.guest_documents`. Same rows for every browser/role.
 const { anketa: anketaDoc, passport: passportDoc, setAnketa: setAnketaRecord } = useGuestDocument(booking?.id);
 
   useEffect(() => {

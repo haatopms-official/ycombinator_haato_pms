@@ -230,7 +230,7 @@ export function BookingDialog({
   }, [editBooking, checkIn, checkOut, open, prefillName, initialEarlyCheckin, initialLateCheckout]);
 
   // ─────────── Live sync of the surname/name/middle-name fields with the
-  // shared passport record (backed by the same `hotel_app_state` engine that
+// shared passport record (backed by the `guest_documents` table that
   // Guest Details and the Anketa modal use). This makes edits made in Guest
   // Details (Паспортные данные) appear here in the main filling area
   // immediately, and vice versa — the three panels always show the same
